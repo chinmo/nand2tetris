@@ -43,4 +43,28 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+   // if (zx == 1) set x = 0        // 16-bit constant
+   Mux16(a=x, b=false, sel=zx, out=fzx);
+
+   // if (nx == 1) set x = !x       // bitwise not
+   Not16(in=fzx, out=fnx);
+   Mux16(a=fzx, b=fnx, sel=nx, out=outx);
+
+   // if (zy == 1) set y = 0        // 16-bit constant
+   Mux16(a=y, b=false, sel=zy, out=fzy);
+
+   // if (ny == 1) set y = !y       // bitwise not
+   Not16(in=fzy, out=fny);
+   Mux16(a=fzy, b=fny, sel=ny, out=outy);
+
+   // if (f == 1)  set out = x + y  // integer 2's complement addition
+   Add16(a=outx, b=outy, out=outp);
+   // if (f == 0)  set out = x & y  // bitwise and
+   And16(a=outx, b=outy, out=outa);
+
+   Mux16(a=outa, b=outp, sel=f, out=outf);
+
+   // if (no == 1) set out = !out   // bitwise not
+   Not16(in=outf, out=outno);
+   Mux16(a=outf, b=outno, sel=no, out=out);
 }
