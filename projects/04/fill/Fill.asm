@@ -18,13 +18,17 @@ D=A
 @i
 M=D
 @color
-M=0
+M=0 // white
 
 @KBD
 D=M
 
-@BLACK
-D;JNE
+@FILL
+D;JEQ
+
+// black
+@color
+M=-1
 
 (FILL)
 @SCREEN
@@ -56,12 +60,4 @@ M=M+1
 M=M-1
 
 @DRAW_LINE
-0;JMP
-
-
-(BLACK)
-@color
-M=-1
-
-@FILL
 0;JMP
