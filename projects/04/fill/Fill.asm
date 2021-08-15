@@ -17,19 +17,14 @@
 D=A
 @i
 M=D
+@color
+M=0
 
 @KBD
 D=M
 
-@FILL
+@BLACK
 D;JNE
-
-// CLEAR
-@SCREEN
-M=D
-
-@LOOP
-0;JMP
 
 (FILL)
 @SCREEN
@@ -38,23 +33,21 @@ D=A
 @line_ptr
 M=D
 
+(DRAW_LINE)
+
 @i
 D=M
-
-(DRAW_LINE)
 
 @LOOP
 D;JEQ
 
-//@32767
-//D=A
-//D=0
-//D=!D
+@color
+D=M
 
 @line_ptr
 A=M
 
-M=-1
+M=D
 
 @line_ptr
 M=M+1
@@ -63,4 +56,12 @@ M=M+1
 M=M-1
 
 @DRAW_LINE
+0;JMP
+
+
+(BLACK)
+@color
+M=-1
+
+@FILL
 0;JMP
