@@ -39,5 +39,82 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // Decode
+    And(a=instruction[15], b=instruction[15], out=Cop);
+    And(a=instruction[15], b=instruction[12], out=aBit);
+    And(a=instruction[15], b=instruction[11], out=c1);
+    And(a=instruction[15], b=instruction[10], out=c2);
+    And(a=instruction[15], b=instruction[9], out=c3);
+    And(a=instruction[15], b=instruction[8], out=c4);
+    And(a=instruction[15], b=instruction[7], out=c5);
+    And(a=instruction[15], b=instruction[6], out=c6);
+    And(a=instruction[15], b=instruction[5], out=d1); // A
+    And(a=instruction[15], b=instruction[4], out=d2); // D
+    And(a=instruction[15], b=instruction[3], out=d3); // Memory[A]
+    And(a=instruction[15], b=instruction[2], out=j1);
+    And(a=instruction[15], b=instruction[1], out=j2);
+    And(a=instruction[15], b=instruction[0], out=j3);
+    DMux8Way(in=true, sel[0]=j3, sel[1]=j2, sel[2]=j1,
+            a=noJmp,
+            b=JGT,
+            c=JEQ,
+            d=JGE,
+            e=JLT,
+            f=JNE,
+            g=JLE,
+            h=Jmp);
+
+    // D
+    DRegister(in=outALU, load=d2, out=Dout);
+
+    // A 命令
+    Mux16(a=instruction, b=outALU, sel=d1, out=Ain);
+    Not(in=Cop, out=Aop);
+    Or(a=Aop, b=d1, out=Aload);
+    ARegister(in=Ain, load=Aload, out=Aout, out[0..14]=addressM);
+    Mux16(a=Aout, b=inM, sel=aBit, out=AMout);
+
+    // C
+    ALU(x=Dout, // D
+        y=AMout, // A/M
+        zx=c1,
+        nx=c2,
+        zy=c3,
+        ny=c4,
+        f=c5,
+        no=c6,
+        out=outM, out=outALU,
+        zr=outZ,
+        ng=outN);
+
+    // Jump
+    Not(in=outZ, out=outNZ);
+    Not(in=outN, out=outPorZ);
+    Or(a=outN, b=outZ, out=outNorZ);
+    And(a=outNZ, b=outPorZ, out=outP);
+
+    And(a=JGT, b=outP, out=doJGT);
+    And(a=JEQ, b=outZ, out=doJEQ);
+    And(a=JGE, b=outPorZ, out=doJGE);
+    And(a=JLT, b=outN, out=doJLT);
+    And(a=JNE, b=outNZ, out=doJNE);
+    And(a=JLE, b=outNorZ, out=doJLE);
+
+    Or8Way( in[0]=false, // No Jump
+            in[1]=doJGT,
+            in[2]=doJEQ,
+            in[3]=doJGE,
+            in[4]=doJLT,
+            in[5]=doJNE,
+            in[6]=doJLE,
+            in[7]=Jmp,
+            out=doJmp);
+
+    // PC
+    And(a=Cop, b=doJmp, out=doLoad);
+    Not(in=doLoad, out=doInc);
+    PC(in=Aout, load=doLoad, inc=doInc, reset=reset, out[0..14]=pc);
+
+    // WriteM
+    And(a=Cop, b=d3, out=writeM);
 }
