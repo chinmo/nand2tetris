@@ -62,7 +62,7 @@ CHIP CPU {
             e=JLT,
             f=JNE,
             g=JLE,
-            h=Jmp);
+            h=JMP);
 
     // D
     DRegister(in=outALU, load=d2, out=Dout);
@@ -107,13 +107,13 @@ CHIP CPU {
             in[4]=doJLT,
             in[5]=doJNE,
             in[6]=doJLE,
-            in[7]=Jmp,
+            in[7]=JMP,
             out=doJmp);
 
     // PC
-    And(a=Cop, b=doJmp, out=doLoad);
-    Not(in=doLoad, out=doInc);
-    PC(in=Aout, load=doLoad, inc=doInc, reset=reset, out[0..14]=pc);
+    And(a=Cop, b=doJmp, out=doPcLoad);
+    Not(in=doPcLoad, out=doPcInc);
+    PC(in=Aout, load=doPcLoad, inc=doPcInc, reset=reset, out[0..14]=pc);
 
     // WriteM
     And(a=Cop, b=d3, out=writeM);
