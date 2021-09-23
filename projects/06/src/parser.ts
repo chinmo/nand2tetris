@@ -15,12 +15,24 @@ export class Parser {
       rs.pause();
     });
 
-    rs.on("end", () => {
+    rs.once("end", () => {
       this.buffer = "";
       this.isEnd = true;
     });
   }
+
   hasMoreCommands(): boolean {
-    return this.buffer != "";
+    return this.buffer != "" && !this.isEnd;
+  }
+
+  advance(): void {
+    if (!this.hasMoreCommands())
+      throw new Error(
+        "advance() can not call when hasMoreCommand() is not true!"
+      );
+
+    if (this.rs.isPaused()) {
+      this.rs.resume();
+    }
   }
 }
