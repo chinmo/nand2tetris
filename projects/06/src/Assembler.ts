@@ -22,7 +22,6 @@ export function assembleFromFile(asm_path: string): Promise<void> {
       });
 
       rl.on("line", (line) => {
-        // Process the line.
         if (!line.includes("//")) {
           ws.write("0000000000000000" + "\n");
         }
