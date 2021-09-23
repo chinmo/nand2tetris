@@ -32,33 +32,4 @@ export function assembleFromFile(asm_path: string): Promise<void> {
       console.error(err);
     }
   })();
-  /*
-  return (async () => {
-    await new Promise((resolve, reject) => {
-      if (!fs.existsSync(asm_path)) resolve("no file");
-
-      const ws = fs.createWriteStream(HACK_FILE_FULLPATH, "utf-8");
-      ws.write("0000000000000000\n");
-      ws.end();
-
-      ws.on("error", (err) => {
-        reject(err);
-      });
-
-      ws.on("finish", resolve);
-    });
-  })();
-*/
-  /* 同期版
-  const hackFileStream = fs.createWriteStream(HACK_FILE_FULLPATH, "utf-8");
-  hackFileStream.write("0000000000000000");
-  hackFileStream.end("\n");
-  */
-  /*
-  try {
-    fs.writeFileSync(HACK_FILE_FULLPATH, "");
-  } catch (err) {
-    console.log(err);
-  }
-  */
 }
