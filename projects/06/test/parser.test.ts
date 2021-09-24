@@ -23,7 +23,7 @@ describe("constructor", () => {
     };
     // When
     const parser = new Parser(rs);
-    rs.emit("data", "0000000000000000\n");
+    rs.emit("data", "@100\n");
 
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
@@ -39,8 +39,8 @@ describe("advance", () => {
     };
 
     const parser = new Parser(rs);
-    rs.emit("data", "0000000000000000\n");
-    rs.emit("data", "0000000000000000\n");
+    rs.emit("data", "@100\n");
+    rs.emit("data", "@200\n");
 
     // When
     parser.advance();
@@ -57,8 +57,8 @@ describe("advance", () => {
     };
 
     const parser = new Parser(rs);
-    rs.emit("data", "0000000000000000\n");
-    rs.emit("data", "0000000000000000\n");
+    rs.emit("data", "@100\n");
+    rs.emit("data", "@200\n");
 
     // When
     parser.advance();
