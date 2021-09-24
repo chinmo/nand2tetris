@@ -4,10 +4,8 @@ import stream from "stream";
 describe("constructor", () => {
   test("Initial state", () => {
     // Given
-    const rs = new stream.Readable();
-    rs._read = function () {
-      /* Do Nothing */
-    };
+    const rs = createMockStream();
+
     // When
     const parser = new Parser(rs);
 
@@ -17,10 +15,7 @@ describe("constructor", () => {
 
   test("Initial state when asm file has some command.", () => {
     // Given
-    const rs = new stream.Readable();
-    rs._read = function () {
-      /* Do Nothing */
-    };
+    const rs = createMockStream();
     // When
     const parser = new Parser(rs);
     rs.emit("data", "@100\n");
@@ -28,15 +23,24 @@ describe("constructor", () => {
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
   });
+
+  test("Initial state when asm file has only comments.", () => {
+    // Given
+    const rs = createMockStream();
+    // When
+    const parser = new Parser(rs);
+    rs.emit("data", "// comments1\n");
+    rs.emit("data", " // comments2\n");
+
+    // Then
+    expect(parser.hasMoreCommands()).toBeFalsy();
+  });
 });
 
 describe("advance", () => {
   test("When there is no commands, advance() does not any works.", () => {
     // Given
-    const rs = new stream.Readable();
-    rs._read = function () {
-      /* Do Nothing */
-    };
+    const rs = createMockStream();
 
     const parser = new Parser(rs);
     rs.emit("data", "@100\n");
@@ -51,10 +55,7 @@ describe("advance", () => {
 
   test("You must not call when there isn't any commands.", () => {
     // Given
-    const rs = new stream.Readable();
-    rs._read = function () {
-      /* Do Nothing */
-    };
+    const rs = createMockStream();
 
     const parser = new Parser(rs);
     rs.emit("data", "@100\n");
@@ -70,3 +71,12 @@ describe("advance", () => {
     expect(() => parser.advance()).toThrow(Error);
   });
 });
+
+function createMockStream(): stream.Readable {
+  const rs = new stream.Readable();
+  rs._read = function () {
+    /* Do Nothing */
+  };
+
+  return rs;
+}

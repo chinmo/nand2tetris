@@ -10,9 +10,9 @@ export class Parser {
     this.buffer = "";
     this.isEnd = false;
 
-    rs.on("data", (chunk) => {
-      this.buffer = chunk;
-      rs.pause();
+    rs.on("data", (chunk: string) => {
+      this.buffer = this.removeComment(chunk).trim();
+      if (this.buffer) rs.pause();
     });
 
     rs.once("end", () => {
@@ -34,5 +34,12 @@ export class Parser {
     if (this.rs.isPaused()) {
       this.rs.resume();
     }
+  }
+
+  private removeComment(text: string): string {
+    let removedText = text;
+    const i = text.indexOf("//");
+    if (i >= 0) removedText = text.substring(0, i);
+    return removedText;
   }
 }

@@ -10,8 +10,6 @@ const ASM_FILE_FULLPATH = path.join(__dirname, ASM_FILE_NAME);
 const HACK_FILE_FULLPATH = path.join(__dirname, HACK_FILE_NAME);
 
 describe("Outputs .asm file.", () => {
-  // beforeEach(() => {});
-
   // ファイルが作成されているとか
   test("Exists Prog.hack", () => {
     // Given
