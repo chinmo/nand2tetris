@@ -33,7 +33,21 @@ describe("constructor", () => {
     rs.emit("data", " // comments2\n");
 
     // Then
+    expect(rs.isPaused()).toBeFalsy();
     expect(parser.hasMoreCommands()).toBeFalsy();
+  });
+
+  test("Initial state when asm file has command with some comments.", () => {
+    // Given
+    const rs = createMockStream();
+    // When
+    const parser = new Parser(rs);
+    rs.emit("data", "// comments1\n");
+    rs.emit("data", "@100\n");
+
+    // Then
+    expect(rs.isPaused()).toBeTruthy();
+    expect(parser.hasMoreCommands()).toBeTruthy();
   });
 });
 
