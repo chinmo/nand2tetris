@@ -1,5 +1,17 @@
 import stream from "stream";
 
+const COMMAND_TYPE = {
+  A_COMMAND: 0,
+  C_COMMAND: 1,
+  L_COMMAND: 2,
+} as const;
+
+type COMMAND_TYPE = typeof COMMAND_TYPE[keyof typeof COMMAND_TYPE];
+
+export const A_COMMAND = COMMAND_TYPE.A_COMMAND;
+export const C_COMMAND = COMMAND_TYPE.C_COMMAND;
+export const L_COMMAND = COMMAND_TYPE.L_COMMAND;
+
 export class Parser {
   rs: stream.Readable;
   command: string;
@@ -34,6 +46,11 @@ export class Parser {
     if (this.rs.isPaused()) {
       this.rs.resume();
     }
+  }
+
+  commandType(): COMMAND_TYPE {
+    if (!this.command) throw new Error("Method not implemented.");
+    return A_COMMAND;
   }
 
   private removeComment(text: string): string {
