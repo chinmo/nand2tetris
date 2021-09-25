@@ -157,6 +157,42 @@ describe("symbol", () => {
   });
 });
 
+describe("dest", () => {
+  test("You must not call when command is not C_COMMAND", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "@0\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(A_COMMAND);
+    expect(() => parser.dest()).toThrow(Error);
+  });
+
+  test("When a command is 'D=A', returns 'D'", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "D=A\n");
+    parser.advance();
+    // Then
+    expect(parser.dest()).toBe("D");
+  });
+
+  test("When dest area has omitted in the command, returns null(empty string)", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "D;JGT\n");
+    parser.advance();
+    // Then
+    expect(parser.dest()).toBe("");
+  });
+});
+
 function createMockStream(): stream.Readable {
   const rs = new stream.Readable();
   rs._read = function () {

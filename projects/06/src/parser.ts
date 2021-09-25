@@ -56,8 +56,15 @@ export class Parser {
 
   symbol(): string {
     if (this.commandType() != A_COMMAND)
-      throw new Error("command is not A_COMMAND");
+      throw new Error("Command is not A_COMMAND");
     return this.command.substring(1);
+  }
+
+  dest(): string {
+    if (this.commandType() != C_COMMAND)
+      throw new Error("Command is not C_COMMAND");
+
+    return this.command.substring(0, this.command.indexOf("="));
   }
 
   private removeComment(text: string): string {
