@@ -2,27 +2,27 @@ import stream from "stream";
 
 export class Parser {
   rs: stream.Readable;
-  buffer: string;
+  command: string;
   isEnd: boolean;
 
   constructor(rs: stream.Readable) {
     this.rs = rs;
-    this.buffer = "";
+    this.command = "";
     this.isEnd = false;
 
     rs.on("data", (chunk: string) => {
-      this.buffer = this.removeComment(chunk).trim();
-      if (this.buffer) rs.pause();
+      this.command = this.removeComment(chunk).trim();
+      if (this.command) rs.pause();
     });
 
     rs.once("end", () => {
-      this.buffer = "";
+      this.command = "";
       this.isEnd = true;
     });
   }
 
   hasMoreCommands(): boolean {
-    return this.buffer != "" && !this.isEnd;
+    return this.command != "" && !this.isEnd;
   }
 
   advance(): void {
