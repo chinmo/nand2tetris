@@ -54,6 +54,12 @@ export class Parser {
     return A_COMMAND;
   }
 
+  symbol(): string {
+    if (this.commandType() != A_COMMAND)
+      throw new Error("command is not A_COMMAND");
+    return this.command.substring(1);
+  }
+
   private removeComment(text: string): string {
     let removedText = text;
     const i = text.indexOf("//");
@@ -62,6 +68,6 @@ export class Parser {
   }
 
   private isC(): boolean {
-    return this.command.match(/^D/) != null;
+    return this.command.match(/^[DM]/) != null;
   }
 }

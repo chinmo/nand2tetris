@@ -118,6 +118,43 @@ describe("commandType", () => {
     // Then
     expect(parser.commandType()).toBe(C_COMMAND);
   });
+
+  test("When a command is 'M=D', returns C_COMMAND.", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "M=D\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(C_COMMAND);
+  });
+});
+
+describe("symbol", () => {
+  test("You must not call when command is not A_COMMAND", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "M=D\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(() => parser.symbol()).toThrow(Error);
+  });
+
+  test("When command is A_COMMAND, return number", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "@100\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(A_COMMAND);
+    expect(parser.symbol()).toBe("100");
+  });
 });
 
 function createMockStream(): stream.Readable {
