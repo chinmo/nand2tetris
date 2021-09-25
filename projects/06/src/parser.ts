@@ -77,6 +77,14 @@ export class Parser {
       : this.command.substring(0, this.command.indexOf(";"));
   }
 
+  jump(): string {
+    if (this.commandType() != C_COMMAND)
+      throw new Error("Command is not C_COMMAND");
+
+    const i = this.command.indexOf(";");
+    return i >= 0 ? this.command.substring(i + 1) : "";
+  }
+
   private removeComment(text: string): string {
     let removedText = text;
     const i = text.indexOf("//");

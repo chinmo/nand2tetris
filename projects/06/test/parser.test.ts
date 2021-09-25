@@ -229,6 +229,42 @@ describe("comp", () => {
   });
 });
 
+describe("jump", () => {
+  test("You must not call when command is not C_COMMAND", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "@0\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(A_COMMAND);
+    expect(() => parser.jump()).toThrow(Error);
+  });
+
+  test("When a command is 'D;JGT', returns 'JGT'", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "D;JGT\n");
+    parser.advance();
+    // Then
+    expect(parser.jump()).toBe("JGT");
+  });
+
+  test("When a command is 'D=A', returns ''", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "D=A\n");
+    parser.advance();
+    // Then
+    expect(parser.jump()).toBe("");
+  });
+});
+
 function createMockStream(): stream.Readable {
   const rs = new stream.Readable();
   rs._read = function () {
