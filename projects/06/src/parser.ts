@@ -49,7 +49,8 @@ export class Parser {
   }
 
   commandType(): COMMAND_TYPE {
-    if (!this.command) throw new Error("Method not implemented.");
+    if (!this.command) throw new Error("No commands");
+    if (this.isC()) return C_COMMAND;
     return A_COMMAND;
   }
 
@@ -58,5 +59,9 @@ export class Parser {
     const i = text.indexOf("//");
     if (i >= 0) removedText = text.substring(0, i);
     return removedText;
+  }
+
+  private isC(): boolean {
+    return this.command.match(/^D/) != null;
   }
 }

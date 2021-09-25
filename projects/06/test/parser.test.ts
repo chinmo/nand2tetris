@@ -1,5 +1,5 @@
 import { Parser } from "../src/parser";
-import { A_COMMAND } from "../src/parser";
+import { A_COMMAND, C_COMMAND } from "../src/parser";
 import stream from "stream";
 
 describe("constructor", () => {
@@ -106,6 +106,17 @@ describe("commandType", () => {
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
+  });
+
+  test("When a command is 'D=A', returns C_COMMAND.", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "D=A\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(C_COMMAND);
   });
 });
 
