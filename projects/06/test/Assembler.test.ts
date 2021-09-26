@@ -65,7 +65,7 @@ describe("Comments", () => {
 
   test("When asm file has comments, they are ignored.", () => {
     // Given
-    fs.writeFileSync(ASM_FILE_FULLPATH, "// comment:1\n@0\n// comment:2\n");
+    fs.writeFileSync(ASM_FILE_FULLPATH, "// comment:xxx\n@0\n// comment:yyy\n");
 
     // When
     return assembleFromFile(ASM_FILE_FULLPATH).then(() => {

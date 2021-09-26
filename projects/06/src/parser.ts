@@ -1,3 +1,4 @@
+import readline from "readline";
 import stream from "stream";
 
 const COMMAND_TYPE = {
@@ -13,28 +14,28 @@ export const C_COMMAND = COMMAND_TYPE.C_COMMAND;
 export const L_COMMAND = COMMAND_TYPE.L_COMMAND;
 
 export class Parser {
-  rs: stream.Readable;
+  rl: readline.Interface;
+  lines: string[];
   command: string;
-  isEnd: boolean;
 
   constructor(rs: stream.Readable) {
-    this.rs = rs;
-    this.command = "";
-    this.isEnd = false;
-
-    rs.on("data", (chunk: string) => {
-      this.command = this.removeComment(chunk).trim();
-      if (this.command) rs.pause();
+    this.rl = readline.createInterface({
+      input: rs,
+      crlfDelay: Infinity,
     });
+    this.lines = [];
+    this.command = "";
 
-    rs.once("end", () => {
-      this.command = "";
-      this.isEnd = true;
+    this.rl.on("line", (line) => {
+      const input = this.removeComment(line).trim();
+      if (input) {
+        this.lines.push(input);
+      }
     });
   }
 
   hasMoreCommands(): boolean {
-    return this.command != "" && !this.isEnd;
+    return this.lines.length > 0;
   }
 
   advance(): void {
@@ -43,20 +44,19 @@ export class Parser {
         "advance() can not call when hasMoreCommand() is not true!"
       );
 
-    if (this.rs.isPaused()) {
-      this.rs.resume();
-    }
+    this.command = <string>this.lines.shift();
   }
 
   commandType(): COMMAND_TYPE {
     if (!this.command) throw new Error("No commands");
-    if (this.isC()) return C_COMMAND;
-    return A_COMMAND;
+    if (this.isA()) return A_COMMAND;
+    return C_COMMAND;
   }
 
   symbol(): string {
     if (this.commandType() != A_COMMAND)
       throw new Error("Command is not A_COMMAND");
+
     return this.command.substring(1);
   }
 
@@ -92,7 +92,7 @@ export class Parser {
     return removedText;
   }
 
-  private isC(): boolean {
-    return this.command.match(/^[DM]/) != null;
+  private isA(): boolean {
+    return this.command.match(/^@/) != null;
   }
 }

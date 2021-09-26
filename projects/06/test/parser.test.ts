@@ -19,7 +19,7 @@ describe("constructor", () => {
     const rs = createMockStream();
     // When
     const parser = new Parser(rs);
-    rs.emit("data", "@100\n");
+    rs.emit("data", "@111\n");
 
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
@@ -34,7 +34,6 @@ describe("constructor", () => {
     rs.emit("data", " // comments2\n");
 
     // Then
-    expect(rs.isPaused()).toBeFalsy();
     expect(parser.hasMoreCommands()).toBeFalsy();
   });
 
@@ -44,16 +43,15 @@ describe("constructor", () => {
     // When
     const parser = new Parser(rs);
     rs.emit("data", "// comments1\n");
-    rs.emit("data", "@100\n");
+    rs.emit("data", "@123\n");
 
     // Then
-    expect(rs.isPaused()).toBeTruthy();
     expect(parser.hasMoreCommands()).toBeTruthy();
   });
 });
 
 describe("advance", () => {
-  test("When there is no commands, advance() does not any works.", () => {
+  test("When there is some commands, it works.", () => {
     // Given
     const rs = createMockStream();
 
@@ -73,8 +71,7 @@ describe("advance", () => {
     const rs = createMockStream();
 
     const parser = new Parser(rs);
-    rs.emit("data", "@100\n");
-    rs.emit("data", "@200\n");
+    rs.emit("data", "@300\n@400\n");
 
     // When
     parser.advance();
@@ -102,7 +99,7 @@ describe("commandType", () => {
     const rs = createMockStream();
     const parser = new Parser(rs);
     // When
-    rs.emit("data", "@100\n");
+    rs.emit("data", "@500\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
@@ -149,11 +146,11 @@ describe("symbol", () => {
     const rs = createMockStream();
     const parser = new Parser(rs);
     // When
-    rs.emit("data", "@100\n");
+    rs.emit("data", "@600\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
-    expect(parser.symbol()).toBe("100");
+    expect(parser.symbol()).toBe("600");
   });
 });
 
