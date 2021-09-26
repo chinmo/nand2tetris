@@ -3,9 +3,10 @@ import path from "path";
 import events from "events";
 import { Parser } from "./parser";
 import { A_COMMAND, C_COMMAND } from "../src/parser";
+import { dest, comp, jump } from "../src/code";
 
-const asm_path: string = process.argv[2];
-assembleFromFile(asm_path);
+const arg_path: string = process.argv[2];
+if (arg_path) assembleFromFile(arg_path);
 
 export function assembleFromFile(asm_path: string): Promise<void> {
   const HACK_FILE_NAME = path.basename(asm_path, ".asm") + ".hack";
@@ -27,16 +28,18 @@ export function assembleFromFile(asm_path: string): Promise<void> {
         parser.advance();
         switch (parser.commandType()) {
           case A_COMMAND:
-            console.log(parser.symbol());
-            ws.write(parser.symbol().padStart(16, "0") + "\n");
+            ws.write(
+              parseInt(parser.symbol(), 10).toString(2).padStart(16, "0") + "\n"
+            );
             break;
           case C_COMMAND:
-            console.log(parser.dest() + parser.comp() + parser.jump());
-            if (parser.dest()) {
-              ws.write(parser.dest() + "=" + parser.comp() + "\n");
-            } else {
-              ws.write(parser.comp() + ";" + parser.jump() + "\n");
-            }
+            ws.write(
+              "111" +
+                dest(parser.dest()) +
+                comp(parser.comp()) +
+                jump(parser.jump()) +
+                "\n"
+            );
             break;
           default:
             throw new Error("Unknown command type");
