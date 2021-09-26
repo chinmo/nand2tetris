@@ -96,6 +96,18 @@ describe("Codes", () => {
     });
   });
 
+  test("C_COMMAND", () => {
+    // Given
+    fs.writeFileSync(ASM_FILE_FULLPATH, "D=A\n");
+
+    // When
+    return assembleFromFile(ASM_FILE_FULLPATH).then(() => {
+      const data = fs.readFileSync(HACK_FILE_FULLPATH, "utf-8");
+      // Then
+      expect(data).toEqual(expect.stringMatching("1110110000010000"));
+    });
+  });
+
   afterEach(() => {
     // *.asm, *.hack ファイルを消す
     fs.readdirSync(__dirname)

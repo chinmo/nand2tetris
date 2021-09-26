@@ -35,8 +35,8 @@ export function assembleFromFile(asm_path: string): Promise<void> {
           case C_COMMAND:
             ws.write(
               "111" +
-                dest(parser.dest()) +
                 comp(parser.comp()) +
+                dest(parser.dest()) +
                 jump(parser.jump()) +
                 "\n"
             );
