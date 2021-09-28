@@ -1,5 +1,5 @@
 import { Parser } from "../src/parser";
-import { A_COMMAND, C_COMMAND } from "../src/parser";
+import { A_COMMAND, C_COMMAND, L_COMMAND } from "../src/parser";
 import stream from "stream";
 
 describe("constructor", () => {
@@ -126,10 +126,21 @@ describe("commandType", () => {
     // Then
     expect(parser.commandType()).toBe(C_COMMAND);
   });
+
+  test("When a command is '(END)', returns L_COMMAND.", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "(END)\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(L_COMMAND);
+  });
 });
 
 describe("symbol", () => {
-  test("You must not call when command is not A_COMMAND", () => {
+  test("You must not call when command is C_COMMAND", () => {
     // Given
     const rs = createMockStream();
     const parser = new Parser(rs);
@@ -151,6 +162,18 @@ describe("symbol", () => {
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
     expect(parser.symbol()).toBe("600");
+  });
+
+  test("When command is L_COMMAND, return symbol string", () => {
+    // Given
+    const rs = createMockStream();
+    const parser = new Parser(rs);
+    // When
+    rs.emit("data", "(END)\n");
+    parser.advance();
+    // Then
+    expect(parser.commandType()).toBe(L_COMMAND);
+    expect(parser.symbol()).toBe("END");
   });
 });
 

@@ -49,15 +49,17 @@ export class Parser {
 
   commandType(): COMMAND_TYPE {
     if (!this.command) throw new Error("No commands");
-    if (this.isA()) return A_COMMAND;
-    return C_COMMAND;
+
+    return this.isA() ? A_COMMAND : this.isL() ? L_COMMAND : C_COMMAND;
   }
 
   symbol(): string {
-    if (this.commandType() != A_COMMAND)
-      throw new Error("Command is not A_COMMAND");
+    if (this.commandType() == C_COMMAND)
+      throw new Error("Command is C_COMMAND!");
 
-    return this.command.substring(1);
+    return this.isA()
+      ? this.command.substring(1)
+      : this.command.replace(/\(|\)/g, "");
   }
 
   dest(): string {
@@ -94,5 +96,9 @@ export class Parser {
 
   private isA(): boolean {
     return this.command.match(/^@/) != null;
+  }
+
+  private isL(): boolean {
+    return this.command.match(/^\(.+\)$/) != null;
   }
 }
