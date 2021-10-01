@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import events from "events";
-import { Parser } from "./parser";
+import { L_COMMAND, Parser } from "./parser";
 import { A_COMMAND, C_COMMAND } from "../src/parser";
 import { dest, comp, jump } from "../src/code";
 
@@ -40,6 +40,9 @@ export function assembleFromFile(asm_path: string): Promise<void> {
                 jump(parser.jump()) +
                 "\n"
             );
+            break;
+          case L_COMMAND:
+            console.log("L_COMMAND!");
             break;
           default:
             throw new Error("Unknown command type");

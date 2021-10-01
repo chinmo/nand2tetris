@@ -1,5 +1,6 @@
 import readline from "readline";
 import stream from "stream";
+import { SymbolTable } from "./symbol_table";
 
 const COMMAND_TYPE = {
   A_COMMAND: 0,
@@ -17,6 +18,7 @@ export class Parser {
   rl: readline.Interface;
   lines: string[];
   command: string;
+  symbolTable: SymbolTable;
 
   constructor(rs: stream.Readable) {
     this.rl = readline.createInterface({
@@ -25,6 +27,7 @@ export class Parser {
     });
     this.lines = [];
     this.command = "";
+    this.symbolTable = new SymbolTable();
 
     this.rl.on("line", (line) => {
       const input = this.removeComment(line).trim();
@@ -57,9 +60,18 @@ export class Parser {
     if (this.commandType() == C_COMMAND)
       throw new Error("Command is C_COMMAND!");
 
-    return this.isA()
-      ? this.command.substring(1)
-      : this.command.replace(/\(|\)/g, "");
+    let result = "";
+    if (this.isA()) {
+      const Xxx = this.command.substring(1);
+      if (this.symbolTable.contains(Xxx)) {
+        result = this.symbolTable.getAddress(Xxx).toString(10);
+      } else {
+        result = Xxx;
+      }
+    } else {
+      result = this.command.replace(/\(|\)/g, "");
+    }
+    return result;
   }
 
   dest(): string {
