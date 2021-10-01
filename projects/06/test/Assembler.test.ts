@@ -116,6 +116,41 @@ describe("Codes", () => {
   });
 });
 
+/*
+describe("Symbol Table version", () => {
+  test("A_COMMAND(value)", () => {
+    // Given
+    fs.writeFileSync(ASM_FILE_FULLPATH, "@2\n");
+
+    // When
+    return assembleFromFile(ASM_FILE_FULLPATH).then(() => {
+      const data = fs.readFileSync(HACK_FILE_FULLPATH, "utf-8");
+      // Then
+      expect(data).toEqual(expect.stringMatching("0000000000000010"));
+    });
+  });
+
+  test("C_COMMAND", () => {
+    // Given
+    fs.writeFileSync(ASM_FILE_FULLPATH, "D=A\n");
+
+    // When
+    return assembleFromFile(ASM_FILE_FULLPATH).then(() => {
+      const data = fs.readFileSync(HACK_FILE_FULLPATH, "utf-8");
+      // Then
+      expect(data).toEqual(expect.stringMatching("1110110000010000"));
+    });
+  });
+
+  afterEach(() => {
+    // *.asm, *.hack ファイルを消す
+    fs.readdirSync(__dirname)
+      .filter((f) => f.endsWith(".asm") || f.endsWith(".hack"))
+      .map((f) => unlink(path.join(__dirname, f)));
+  });
+});
+*/
+
 function unlink(path: string): void {
   try {
     fs.unlinkSync(path);
