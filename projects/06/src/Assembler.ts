@@ -9,21 +9,22 @@ const arg_path: string = process.argv[2];
 if (arg_path) assembleFromFile(arg_path);
 
 export function assembleFromFile(asm_path: string): Promise<void> {
-  const HACK_FILE_NAME = path.basename(asm_path, ".asm") + ".hack";
-
-  const DIR_PATH = path.dirname(asm_path);
-
-  const HACK_FILE_FULLPATH = path.join(DIR_PATH, HACK_FILE_NAME);
-
   return (async () => {
     try {
       if (!fs.existsSync(asm_path)) return;
 
+      const HACK_FILE_PATH = path.join(
+        path.dirname(asm_path),
+        path.basename(asm_path, ".asm") + ".hack"
+      );
       const rs = fs.createReadStream(asm_path);
-      const ws = fs.createWriteStream(HACK_FILE_FULLPATH, "utf-8");
+      const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
       const parser = new Parser(rs);
+
+      // 1st pass
       await events.once(rs, "close");
 
+      // 2nd pass
       while (parser.hasMoreCommands()) {
         parser.advance();
         switch (parser.commandType()) {

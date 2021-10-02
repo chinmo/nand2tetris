@@ -117,7 +117,7 @@ describe("Codes", () => {
 });
 
 describe("Symbol Table version", () => {
-  test("R0", () => {
+  test("Predefined symbol", () => {
     // Given
     fs.writeFileSync(ASM_FILE_FULLPATH, "@R0\n");
 
@@ -128,7 +128,21 @@ describe("Symbol Table version", () => {
       expect(data).toEqual(expect.stringMatching("0000000000000000"));
     });
   });
+  /*
+  test("Label symbol", () => {
+    // Given
+    fs.writeFileSync(ASM_FILE_FULLPATH, "(TEST)\n@0\n@TEST\n");
 
+    // When
+    return assembleFromFile(ASM_FILE_FULLPATH).then(() => {
+      const data = fs.readFileSync(HACK_FILE_FULLPATH, "utf-8");
+      // Then
+      expect(data).toEqual(
+        expect.stringMatching("0000000000000000\n0000000000000000\n")
+      );
+    });
+  });
+*/
   afterEach(() => {
     // *.asm, *.hack ファイルを消す
     fs.readdirSync(__dirname)
