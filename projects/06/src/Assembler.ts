@@ -4,8 +4,6 @@ import events from "events";
 import { L_COMMAND, Parser } from "./parser";
 import { A_COMMAND, C_COMMAND } from "../src/parser";
 import { dest, comp, jump } from "../src/code";
-import readline from "readline";
-import stream from "stream";
 import { SymbolTable } from "./symbol_table";
 
 const arg_path: string = process.argv[2];
@@ -20,17 +18,15 @@ export function assembleFromFile(asm_path: string): Promise<void> {
         path.dirname(asm_path),
         path.basename(asm_path, ".asm") + ".hack"
       );
-      const rs = fs.createReadStream(asm_path);
       const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
       const symbolTable = new SymbolTable();
       // 1st pass
       await exec1stPass(asm_path, symbolTable);
 
       // 2nd pass
-      //      const bs = stream.Readable.from(buffer);
-      const bs = fs.createReadStream(asm_path);
-      const parser = new Parser(bs);
-      await events.once(bs, "close");
+      const rs = fs.createReadStream(asm_path);
+      const parser = new Parser(rs);
+      await events.once(rs, "close");
 
       while (parser.hasMoreCommands()) {
         parser.advance();
@@ -68,13 +64,6 @@ export function assembleFromFile(asm_path: string): Promise<void> {
   })();
 }
 
-function removeComment(text: string): string {
-  let removedText = text;
-  const i = text.indexOf("//");
-  if (i >= 0) removedText = text.substring(0, i);
-  return removedText;
-}
-
 async function exec1stPass(path: string, symbolTable: SymbolTable) {
   let addressNo = 0;
   const rs = fs.createReadStream(path);
@@ -95,24 +84,4 @@ async function exec1stPass(path: string, symbolTable: SymbolTable) {
         break;
     }
   }
-  /*
-  const rl = readline
-    .createInterface({
-      input: fs.createReadStream(path),
-      crlfDelay: Infinity,
-    })
-    .on("line", (line) => {
-      const command = removeComment(line).trim();
-      if (command) {
-        if (command.match(/^\(/)) {
-          // (Xxx)
-          symbolTable.addEntry(command.replace(/\(|\)/g, ""), addressNo);
-        } else {
-          addressNo += 1;
-        }
-      }
-    });
-
-  await events.once(rl, "close");
-  */
 }
