@@ -4,6 +4,8 @@ import events from "events";
 import { L_COMMAND, Parser } from "./parser";
 import { A_COMMAND, C_COMMAND } from "../src/parser";
 import { dest, comp, jump } from "../src/code";
+import readline from "readline";
+import stream from "stream";
 
 const arg_path: string = process.argv[2];
 if (arg_path) assembleFromFile(arg_path);
@@ -19,10 +21,25 @@ export function assembleFromFile(asm_path: string): Promise<void> {
       );
       const rs = fs.createReadStream(asm_path);
       const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
-      const parser = new Parser(rs);
 
       // 1st pass
+
+      const rl = readline.createInterface({
+        input: rs,
+        crlfDelay: Infinity,
+      });
+
+      let buffer = "";
+
+      rl.on("line", (line) => {
+        buffer += removeComment(line).trim();
+      });
+
       await events.once(rs, "close");
+
+      const bs = stream.Readable.from(buffer);
+      const parser = new Parser(bs);
+      await events.once(bs, "close");
 
       // 2nd pass
       while (parser.hasMoreCommands()) {
@@ -56,4 +73,11 @@ export function assembleFromFile(asm_path: string): Promise<void> {
       console.error(err);
     }
   })();
+}
+
+function removeComment(text: string): string {
+  let removedText = text;
+  const i = text.indexOf("//");
+  if (i >= 0) removedText = text.substring(0, i);
+  return removedText;
 }
