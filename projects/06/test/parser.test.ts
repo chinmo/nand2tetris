@@ -140,18 +140,6 @@ describe("symbol", () => {
     expect(parser.symbol()).toBe("600");
   });
 
-  test("When command is A_COMMAND and Xxx is a symbole, return number from symbol table", () => {
-    // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
-    // When
-    rs.emit("data", "@R0\n");
-    parser.advance();
-    // Then
-    expect(parser.commandType()).toBe(A_COMMAND);
-    expect(parser.symbol()).toBe("0");
-  });
-
   test("When command is L_COMMAND, return symbol string", () => {
     // Given
     const rs = createMockStream();

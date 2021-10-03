@@ -59,12 +59,7 @@ export class Parser {
 
     let result = "";
     if (this.isA()) {
-      const Xxx = this.command.substring(1);
-      if (this.symbolTable.contains(Xxx)) {
-        result = this.symbolTable.getAddress(Xxx).toString(10);
-      } else {
-        result = Xxx;
-      }
+      result = this.command.substring(1);
     } else {
       result = this.command.replace(/\(|\)/g, "");
     }

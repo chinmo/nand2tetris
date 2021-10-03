@@ -6,6 +6,7 @@ import { A_COMMAND, C_COMMAND } from "../src/parser";
 import { dest, comp, jump } from "../src/code";
 import readline from "readline";
 import stream from "stream";
+import { SymbolTable } from "./symbol_table";
 
 const arg_path: string = process.argv[2];
 if (arg_path) assembleFromFile(arg_path);
@@ -30,6 +31,7 @@ export function assembleFromFile(asm_path: string): Promise<void> {
       });
 
       let buffer = "";
+      const symbolTable = new SymbolTable();
 
       rl.on("line", (line) => {
         buffer += removeComment(line).trim();
@@ -45,11 +47,14 @@ export function assembleFromFile(asm_path: string): Promise<void> {
       while (parser.hasMoreCommands()) {
         parser.advance();
         switch (parser.commandType()) {
-          case A_COMMAND:
-            ws.write(
-              parseInt(parser.symbol(), 10).toString(2).padStart(16, "0") + "\n"
-            );
+          case A_COMMAND: {
+            let Xxx = parser.symbol();
+            if (symbolTable.contains(Xxx)) {
+              Xxx = symbolTable.getAddress(Xxx).toString(10);
+            }
+            ws.write(parseInt(Xxx, 10).toString(2).padStart(16, "0") + "\n");
             break;
+          }
           case C_COMMAND:
             ws.write(
               "111" +
