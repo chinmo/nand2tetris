@@ -1,6 +1,5 @@
 import readline from "readline";
 import stream from "stream";
-import { SymbolTable } from "./symbol_table";
 
 const COMMAND_TYPE = {
   A_COMMAND: 0,
@@ -18,20 +17,22 @@ export class Parser {
   rl: readline.Interface;
   lines: string[];
   command: string;
-  symbolTable: SymbolTable;
 
   constructor(rs: stream.Readable) {
-    this.rl = readline.createInterface({
-      input: rs,
-      crlfDelay: Infinity,
-    });
     this.lines = [];
     this.command = "";
-    this.symbolTable = new SymbolTable();
 
-    this.rl.on("line", (line) => {
-      this.lines.push(line);
-    });
+    this.rl = readline
+      .createInterface({
+        input: rs,
+        crlfDelay: Infinity,
+      })
+      .on("line", (line) => {
+        const input = this.removeComment(line).trim();
+        if (input) {
+          this.lines.push(input);
+        }
+      });
   }
 
   hasMoreCommands(): boolean {
@@ -97,5 +98,12 @@ export class Parser {
 
   private isL(): boolean {
     return this.command.match(/^\(.+\)$/) != null;
+  }
+
+  private removeComment(text: string): string {
+    let removedText = text;
+    const i = text.indexOf("//");
+    if (i >= 0) removedText = text.substring(0, i);
+    return removedText;
   }
 }
