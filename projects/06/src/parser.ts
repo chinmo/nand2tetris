@@ -30,10 +30,7 @@ export class Parser {
     this.symbolTable = new SymbolTable();
 
     this.rl.on("line", (line) => {
-      const input = this.removeComment(line).trim();
-      if (input) {
-        this.lines.push(input);
-      }
+      this.lines.push(line);
     });
   }
 
@@ -97,13 +94,6 @@ export class Parser {
 
     const i = this.command.indexOf(";");
     return i >= 0 ? this.command.substring(i + 1) : "";
-  }
-
-  private removeComment(text: string): string {
-    let removedText = text;
-    const i = text.indexOf("//");
-    if (i >= 0) removedText = text.substring(0, i);
-    return removedText;
   }
 
   private isA(): boolean {

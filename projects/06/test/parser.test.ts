@@ -24,30 +24,6 @@ describe("constructor", () => {
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
   });
-
-  test("Initial state when asm file has only comments.", () => {
-    // Given
-    const rs = createMockStream();
-    // When
-    const parser = new Parser(rs);
-    rs.emit("data", "// comments1\n");
-    rs.emit("data", " // comments2\n");
-
-    // Then
-    expect(parser.hasMoreCommands()).toBeFalsy();
-  });
-
-  test("Initial state when asm file has command with some comments.", () => {
-    // Given
-    const rs = createMockStream();
-    // When
-    const parser = new Parser(rs);
-    rs.emit("data", "// comments1\n");
-    rs.emit("data", "@123\n");
-
-    // Then
-    expect(parser.hasMoreCommands()).toBeTruthy();
-  });
 });
 
 describe("advance", () => {
