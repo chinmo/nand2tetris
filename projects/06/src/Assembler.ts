@@ -14,50 +14,13 @@ export function assembleFromFile(asm_path: string): Promise<void> {
     try {
       if (!fs.existsSync(asm_path)) return;
 
-      const HACK_FILE_PATH = path.join(
-        path.dirname(asm_path),
-        path.basename(asm_path, ".asm") + ".hack"
-      );
-      const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
       const symbolTable = new SymbolTable();
+
       // 1st pass
       await exec1stPass(asm_path, symbolTable);
 
       // 2nd pass
-      const rs = fs.createReadStream(asm_path);
-      const parser = new Parser(rs);
-      await events.once(rs, "close");
-
-      while (parser.hasMoreCommands()) {
-        parser.advance();
-        switch (parser.commandType()) {
-          case A_COMMAND: {
-            let Xxx = parser.symbol();
-            if (symbolTable.contains(Xxx)) {
-              Xxx = symbolTable.getAddress(Xxx).toString(10);
-            }
-            ws.write(parseInt(Xxx, 10).toString(2).padStart(16, "0") + "\n");
-            break;
-          }
-          case C_COMMAND:
-            ws.write(
-              "111" +
-                comp(parser.comp()) +
-                dest(parser.dest()) +
-                jump(parser.jump()) +
-                "\n"
-            );
-            break;
-          case L_COMMAND:
-            console.log("L_COMMAND!");
-            break;
-          default:
-            throw new Error("Unknown command type");
-        }
-      }
-
-      ws.close();
-      await events.once(ws, "close");
+      await exec2ndPass(asm_path, symbolTable);
     } catch (err) {
       console.error(err);
     }
@@ -81,7 +44,50 @@ async function exec1stPass(path: string, symbolTable: SymbolTable) {
         symbolTable.addEntry(parser.symbol(), addressNo);
         break;
       default:
-        break;
+        throw new Error("1st Pass: Unknown command type");
     }
   }
+}
+
+async function exec2ndPass(asm_path: string, symbolTable: SymbolTable) {
+  const HACK_FILE_PATH = path.join(
+    path.dirname(asm_path),
+    path.basename(asm_path, ".asm") + ".hack"
+  );
+  const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
+
+  const rs = fs.createReadStream(asm_path);
+  const parser = new Parser(rs);
+  await events.once(rs, "close");
+
+  while (parser.hasMoreCommands()) {
+    parser.advance();
+    switch (parser.commandType()) {
+      case A_COMMAND: {
+        let Xxx = parser.symbol();
+        if (symbolTable.contains(Xxx)) {
+          Xxx = symbolTable.getAddress(Xxx).toString(10);
+        }
+        ws.write(parseInt(Xxx, 10).toString(2).padStart(16, "0") + "\n");
+        break;
+      }
+      case C_COMMAND:
+        ws.write(
+          "111" +
+            comp(parser.comp()) +
+            dest(parser.dest()) +
+            jump(parser.jump()) +
+            "\n"
+        );
+        break;
+      case L_COMMAND:
+        console.log("L_COMMAND!");
+        break;
+      default:
+        throw new Error("2nd Pass: Unknown command type");
+    }
+  }
+
+  ws.close();
+  await events.once(ws, "close");
 }
