@@ -6,30 +6,27 @@ import { A_COMMAND, C_COMMAND } from "../src/parser";
 import { dest, comp, jump } from "../src/code";
 import { SymbolTable } from "./symbol_table";
 
-const arg_path: string = process.argv[2];
-if (arg_path) assembleFromFile(arg_path);
+const argPath: string = process.argv[2];
+if (argPath) assembleFromFile(argPath);
 
-export function assembleFromFile(asm_path: string): Promise<void> {
+export function assembleFromFile(asmPath: string): Promise<void> {
   return (async () => {
     try {
-      if (!fs.existsSync(asm_path)) return;
+      if (!fs.existsSync(asmPath)) return;
 
       const symbolTable = new SymbolTable();
 
-      // 1st pass
-      await exec1stPass(asm_path, symbolTable);
-
-      // 2nd pass
-      await exec2ndPass(asm_path, symbolTable);
+      await exec1stPass(asmPath, symbolTable);
+      await exec2ndPass(asmPath, symbolTable);
     } catch (err) {
       console.error(err);
     }
   })();
 }
 
-async function exec1stPass(path: string, symbolTable: SymbolTable) {
+async function exec1stPass(asmPath: string, symbolTable: SymbolTable) {
   let addressNo = 0;
-  const rs = fs.createReadStream(path);
+  const rs = fs.createReadStream(asmPath);
   const parser = new Parser(rs);
   await events.once(rs, "close");
 
@@ -49,14 +46,14 @@ async function exec1stPass(path: string, symbolTable: SymbolTable) {
   }
 }
 
-async function exec2ndPass(asm_path: string, symbolTable: SymbolTable) {
+async function exec2ndPass(asmPath: string, symbolTable: SymbolTable) {
   const HACK_FILE_PATH = path.join(
-    path.dirname(asm_path),
-    path.basename(asm_path, ".asm") + ".hack"
+    path.dirname(asmPath),
+    path.basename(asmPath, ".asm") + ".hack"
   );
   const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
 
-  const rs = fs.createReadStream(asm_path);
+  const rs = fs.createReadStream(asmPath);
   const parser = new Parser(rs);
   await events.once(rs, "close");
 
