@@ -1,14 +1,20 @@
 import { Parser } from "../src/parser";
 import { A_COMMAND, C_COMMAND, L_COMMAND } from "../src/parser";
-import stream from "stream";
+import fs from "fs";
+import path from "path";
+
+const asmPath = path.join(__dirname, "Prog.asm");
 
 describe("constructor", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("Initial state", () => {
     // Given
-    const rs = createMockStream();
-
+    fs.writeFileSync(asmPath, "");
     // When
-    const parser = new Parser(rs);
+    const parser = new Parser(asmPath);
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
@@ -16,10 +22,9 @@ describe("constructor", () => {
 
   test("Initial state when asm file has some command.", () => {
     // Given
-    const rs = createMockStream();
+    fs.writeFileSync(asmPath, "@111\n");
     // When
-    const parser = new Parser(rs);
-    rs.emit("data", "@111\n");
+    const parser = new Parser(asmPath);
 
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
@@ -27,13 +32,15 @@ describe("constructor", () => {
 });
 
 describe("advance", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("When there is some commands, it works.", () => {
     // Given
-    const rs = createMockStream();
+    fs.writeFileSync(asmPath, "@100\n@200\n");
 
-    const parser = new Parser(rs);
-    rs.emit("data", "@100\n");
-    rs.emit("data", "@200\n");
+    const parser = new Parser(asmPath);
 
     // When
     parser.advance();
@@ -44,15 +51,13 @@ describe("advance", () => {
 
   test("You must not call when there isn't any commands.", () => {
     // Given
-    const rs = createMockStream();
+    fs.writeFileSync(asmPath, "@300\n@400\n");
 
-    const parser = new Parser(rs);
-    rs.emit("data", "@300\n@400\n");
+    const parser = new Parser(asmPath);
 
     // When
     parser.advance();
     parser.advance();
-    rs.emit("end");
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
@@ -61,10 +66,15 @@ describe("advance", () => {
 });
 
 describe("commandType", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("You must not call when there isn't any commands.", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "");
+
+    const parser = new Parser(asmPath);
     // When
     // Then
     expect(() => parser.commandType()).toThrow(Error);
@@ -72,10 +82,10 @@ describe("commandType", () => {
 
   test("When a command is '@Xxx', returns A_COMMAND.", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "@500\n");
+
+    const parser = new Parser(asmPath);
     // When
-    rs.emit("data", "@500\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
@@ -83,10 +93,10 @@ describe("commandType", () => {
 
   test("When a command is 'D=A', returns C_COMMAND.", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "D=A\n");
+
+    const parser = new Parser(asmPath);
     // When
-    rs.emit("data", "D=A\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(C_COMMAND);
@@ -94,10 +104,10 @@ describe("commandType", () => {
 
   test("When a command is 'M=D', returns C_COMMAND.", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "M=D\n");
+
+    const parser = new Parser(asmPath);
     // When
-    rs.emit("data", "M=D\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(C_COMMAND);
@@ -105,10 +115,10 @@ describe("commandType", () => {
 
   test("When a command is '(END)', returns L_COMMAND.", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "(END)\n");
+
+    const parser = new Parser(asmPath);
     // When
-    rs.emit("data", "(END)\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(L_COMMAND);
@@ -116,12 +126,16 @@ describe("commandType", () => {
 });
 
 describe("symbol", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("You must not call when command is C_COMMAND", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "M=D\n");
+
+    const parser = new Parser(asmPath);
     // When
-    rs.emit("data", "M=D\n");
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(C_COMMAND);
@@ -130,10 +144,10 @@ describe("symbol", () => {
 
   test("When command is A_COMMAND and Xxx is a number, return number", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "@600\n");
     // When
-    rs.emit("data", "@600\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
@@ -142,10 +156,10 @@ describe("symbol", () => {
 
   test("When command is L_COMMAND, return symbol string", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "(END)\n");
     // When
-    rs.emit("data", "(END)\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(L_COMMAND);
@@ -154,12 +168,16 @@ describe("symbol", () => {
 });
 
 describe("dest", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("You must not call when command is not C_COMMAND", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "@0\n");
     // When
-    rs.emit("data", "@0\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
@@ -168,10 +186,10 @@ describe("dest", () => {
 
   test("When a command is 'D=A', returns 'D'", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "D=A\n");
     // When
-    rs.emit("data", "D=A\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.dest()).toBe("D");
@@ -179,10 +197,10 @@ describe("dest", () => {
 
   test("When dest area has omitted in the command, returns null(empty string)", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "D;JGT\n");
     // When
-    rs.emit("data", "D;JGT\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.dest()).toBe("");
@@ -190,12 +208,16 @@ describe("dest", () => {
 });
 
 describe("comp", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("You must not call when command is not C_COMMAND", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "@0\n");
     // When
-    rs.emit("data", "@0\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
@@ -204,10 +226,10 @@ describe("comp", () => {
 
   test("When a command is 'D=A', returns 'A'", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "D=A\n");
     // When
-    rs.emit("data", "D=A\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.comp()).toBe("A");
@@ -215,10 +237,10 @@ describe("comp", () => {
 
   test("When a command is 'D;JGT', returns 'D'", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "D;JGT\n");
     // When
-    rs.emit("data", "D;JGT\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.comp()).toBe("D");
@@ -226,12 +248,16 @@ describe("comp", () => {
 });
 
 describe("jump", () => {
+  afterEach(() => {
+    deleteAsmFile();
+  });
+
   test("You must not call when command is not C_COMMAND", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "@0\n");
     // When
-    rs.emit("data", "@0\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.commandType()).toBe(A_COMMAND);
@@ -240,10 +266,10 @@ describe("jump", () => {
 
   test("When a command is 'D;JGT', returns 'JGT'", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+    fs.writeFileSync(asmPath, "D;JGT\n");
     // When
-    rs.emit("data", "D;JGT\n");
+    const parser = new Parser(asmPath);
+    // When
     parser.advance();
     // Then
     expect(parser.jump()).toBe("JGT");
@@ -251,21 +277,29 @@ describe("jump", () => {
 
   test("When a command is 'D=A', returns ''", () => {
     // Given
-    const rs = createMockStream();
-    const parser = new Parser(rs);
+
+    fs.writeFileSync(asmPath, "D=A\n");
     // When
-    rs.emit("data", "D=A\n");
+    const parser = new Parser(asmPath);
+    // When
+
+    //const parser = initParser("D=A\n");
     parser.advance();
     // Then
     expect(parser.jump()).toBe("");
   });
 });
 
-function createMockStream(): stream.Readable {
-  const rs = new stream.Readable();
-  rs._read = function () {
-    /* Do Nothing */
-  };
+function deleteAsmFile() {
+  fs.readdirSync(__dirname)
+    .filter((f) => f.endsWith(".asm"))
+    .map((f) => unlink(path.join(__dirname, f)));
+}
 
-  return rs;
+function unlink(path: string): void {
+  try {
+    fs.unlinkSync(path);
+  } catch (err) {
+    console.log(err);
+  }
 }

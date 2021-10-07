@@ -1,5 +1,4 @@
-import readline from "readline";
-import stream from "stream";
+import fs from "fs";
 
 const COMMAND_TYPE = {
   A_COMMAND: 0,
@@ -14,25 +13,25 @@ export const C_COMMAND = COMMAND_TYPE.C_COMMAND;
 export const L_COMMAND = COMMAND_TYPE.L_COMMAND;
 
 export class Parser {
-  rl: readline.Interface;
   lines: string[];
   command: string;
 
-  constructor(rs: stream.Readable) {
+  constructor(asmPath: string) {
     this.lines = [];
     this.command = "";
 
-    this.rl = readline
-      .createInterface({
-        input: rs,
-        crlfDelay: Infinity,
-      })
-      .on("line", (line) => {
-        const input = this.removeComment(line).trim();
-        if (input) {
-          this.lines.push(input);
-        }
-      });
+    if (asmPath) {
+      const buffer = fs.readFileSync(asmPath);
+      buffer
+        .toString()
+        .split("\n")
+        .map((line) => {
+          const input = this.removeComment(line).trim();
+          if (input) {
+            this.lines.push(input);
+          }
+        });
+    }
   }
 
   hasMoreCommands(): boolean {

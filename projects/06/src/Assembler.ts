@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import events from "events";
 import { L_COMMAND, Parser } from "./parser";
 import { A_COMMAND, C_COMMAND } from "../src/parser";
 import { dest, comp, jump } from "../src/code";
@@ -9,26 +8,24 @@ import { SymbolTable } from "./symbol_table";
 const argPath: string = process.argv[2];
 if (argPath) assembleFromFile(argPath);
 
-export function assembleFromFile(asmPath: string): Promise<void> {
-  return (async () => {
-    try {
-      if (!fs.existsSync(asmPath)) return;
+export function assembleFromFile(asmPath: string): void {
+  //  return (async () => {
+  //    try {
+  if (!fs.existsSync(asmPath)) return;
 
-      const symbolTable = new SymbolTable();
+  const symbolTable = new SymbolTable();
 
-      await exec1stPass(asmPath, symbolTable);
-      await exec2ndPass(asmPath, symbolTable);
-    } catch (err) {
-      console.error(err);
-    }
-  })();
+  exec1stPass(asmPath, symbolTable);
+  exec2ndPass(asmPath, symbolTable);
+  //   } catch (err) {
+  //     console.error(err);
+  //    }
+  //  })();
 }
 
-async function exec1stPass(asmPath: string, symbolTable: SymbolTable) {
+function exec1stPass(asmPath: string, symbolTable: SymbolTable) {
   let addressNo = 0;
-  const rs = fs.createReadStream(asmPath);
-  const parser = new Parser(rs);
-  await events.once(rs, "close");
+  const parser = new Parser(asmPath);
 
   while (parser.hasMoreCommands()) {
     parser.advance();
@@ -46,16 +43,14 @@ async function exec1stPass(asmPath: string, symbolTable: SymbolTable) {
   }
 }
 
-async function exec2ndPass(asmPath: string, symbolTable: SymbolTable) {
-  const HACK_FILE_PATH = path.join(
+function exec2ndPass(asmPath: string, symbolTable: SymbolTable) {
+  const hackPath = path.join(
     path.dirname(asmPath),
     path.basename(asmPath, ".asm") + ".hack"
   );
-  const ws = fs.createWriteStream(HACK_FILE_PATH, "utf-8");
+  const fd = fs.openSync(hackPath, "w");
 
-  const rs = fs.createReadStream(asmPath);
-  const parser = new Parser(rs);
-  await events.once(rs, "close");
+  const parser = new Parser(asmPath);
 
   while (parser.hasMoreCommands()) {
     parser.advance();
@@ -65,11 +60,15 @@ async function exec2ndPass(asmPath: string, symbolTable: SymbolTable) {
         if (symbolTable.contains(Xxx)) {
           Xxx = symbolTable.getAddress(Xxx).toString(10);
         }
-        ws.write(parseInt(Xxx, 10).toString(2).padStart(16, "0") + "\n");
+        fs.writeSync(
+          fd,
+          parseInt(Xxx, 10).toString(2).padStart(16, "0") + "\n"
+        );
         break;
       }
       case C_COMMAND:
-        ws.write(
+        fs.writeSync(
+          fd,
           "111" +
             comp(parser.comp()) +
             dest(parser.dest()) +
@@ -85,6 +84,5 @@ async function exec2ndPass(asmPath: string, symbolTable: SymbolTable) {
     }
   }
 
-  ws.close();
-  await events.once(ws, "close");
+  fs.closeSync(fd);
 }
