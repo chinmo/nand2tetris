@@ -9,18 +9,12 @@ const argPath: string = process.argv[2];
 if (argPath) assembleFromFile(argPath);
 
 export function assembleFromFile(asmPath: string): void {
-  //  return (async () => {
-  //    try {
   if (!fs.existsSync(asmPath)) return;
 
   const symbolTable = new SymbolTable();
 
   exec1stPass(asmPath, symbolTable);
   exec2ndPass(asmPath, symbolTable);
-  //   } catch (err) {
-  //     console.error(err);
-  //    }
-  //  })();
 }
 
 function exec1stPass(asmPath: string, symbolTable: SymbolTable) {
