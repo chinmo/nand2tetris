@@ -136,6 +136,29 @@ describe("Symbol Table version", () => {
     );
   });
 
+  test("Variable symbol", () => {
+    // Given
+    fs.writeFileSync(
+      asmFilePath,
+      "@0\n" + "D=M\n" + "D;JLE\n" + "@counter\n" + "M=D\n" + "@SCREEN\n"
+    );
+
+    // When
+    assembleFromFile(asmFilePath);
+    const data = fs.readFileSync(hackFilePath, "utf-8");
+    // Then
+    expect(data).toEqual(
+      expect.stringMatching(
+        "0000000000000000\n" +
+          "1111110000010000\n" +
+          "1110001100000110\n" +
+          "0000000000010000\n" +
+          "1110001100001000\n" +
+          "0100000000000000\n"
+      )
+    );
+  });
+
   afterEach(() => {
     // *.asm, *.hack ファイルを消す
     fs.readdirSync(__dirname)
