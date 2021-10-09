@@ -1,4 +1,4 @@
-import { assembleFromFile } from "../src/Assembler";
+import { assembleFromFile } from "../src/assembler";
 import path from "path";
 import fs from "fs";
 

@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { A_COMMAND, C_COMMAND, L_COMMAND, Parser } from "./parser";
 import { dest, comp, jump } from "./code";
-import { SymbolTable } from "./symbol_table";
+import { SymbolTable } from "./symbolTable";
 
 const argPath: string = process.argv[2];
 if (argPath) assembleFromFile(argPath);

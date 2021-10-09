@@ -1,4 +1,4 @@
-import { SymbolTable } from "../src/symbol_table";
+import { SymbolTable } from "../src/symbolTable";
 
 describe("initialize", () => {
   test("When you create an instance, there is no symbol", () => {
