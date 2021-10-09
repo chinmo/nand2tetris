@@ -57,7 +57,6 @@ function exec2ndPass(asmPath: string, symbolTable: SymbolTable) {
         } else {
           address = parseInt(Xxx);
           if (isNaN(address)) {
-            console.log(Xxx);
             address = allocatableAddress;
             symbolTable.addEntry(Xxx, address);
             allocatableAddress++;
