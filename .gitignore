@@ -7,3 +7,5 @@ tools/
 .DS_Store
 *.hack
 
+*.dSYM/
+

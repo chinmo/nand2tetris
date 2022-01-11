@@ -14,6 +14,7 @@ describe("Outputs .asm file.", () => {
   test("Exists Prog.hack", () => {
     // Given
     fs.writeFileSync(asmFilePath, "");
+    fs.statSync(asmFilePath); // なんかしないとファイルができる前に assempleFromFile でファイル読んじゃうみたい...
 
     // When
     assembleFromFile(asmFilePath);
