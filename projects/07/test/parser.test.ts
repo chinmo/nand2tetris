@@ -1,5 +1,5 @@
 import { Parser } from "../src/parser";
-import { C_PUSH } from "../src/parser";
+import { C_ARITHMETIC, C_PUSH } from "../src/parser";
 
 import fs from "fs";
 import path from "path";
@@ -62,6 +62,7 @@ describe("SimpleAdd.vm", () => {
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
+    expect(parser.commandType()).toBe(C_ARITHMETIC);
   });
 
   test("First command", () => {

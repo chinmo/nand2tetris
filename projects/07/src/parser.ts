@@ -14,6 +14,7 @@ const Command = {
 
 type CommandType = typeof Command[keyof typeof Command];
 
+export const C_ARITHMETIC = Command.Arithmetic;
 export const C_PUSH = Command.Push;
 export class Parser {
   lines: string[];
@@ -55,7 +56,7 @@ export class Parser {
   }
 
   commandType(): CommandType {
-    return C_PUSH;
+    return this.command.match(/push/) ? C_PUSH : C_ARITHMETIC;
   }
   private removeComment(text: string): string {
     let removedText = text;
