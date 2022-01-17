@@ -1,4 +1,5 @@
 import { Parser } from "../src/parser";
+import { C_PUSH } from "../src/parser";
 
 import fs from "fs";
 import path from "path";
@@ -61,6 +62,17 @@ describe("SimpleAdd.vm", () => {
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
+  });
+
+  test("First command", () => {
+    // Given
+    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+
+    // When
+    parser.advance();
+
+    // Then
+    expect(parser.commandType()).toBe(C_PUSH);
   });
 });
 

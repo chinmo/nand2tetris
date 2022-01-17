@@ -12,6 +12,9 @@ const Command = {
   Call: 8,
 } as const;
 
+type CommandType = typeof Command[keyof typeof Command];
+
+export const C_PUSH = Command.Push;
 export class Parser {
   lines: string[];
   command: string;
@@ -51,6 +54,9 @@ export class Parser {
     this.command = <string>this.lines.shift();
   }
 
+  commandType(): CommandType {
+    return C_PUSH;
+  }
   private removeComment(text: string): string {
     let removedText = text;
     const i = text.indexOf("//");
