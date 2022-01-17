@@ -33,6 +33,12 @@ describe("Initial State", () => {
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
   });
+});
+
+describe("SimpleAdd.vm", () => {
+  afterEach(() => {
+    deleteVmFile();
+  });
 
   test("Valid vm file", () => {
     // Given
@@ -42,6 +48,19 @@ describe("Initial State", () => {
 
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
+  });
+
+  test("SimpleAdd.vm has 3 commands", () => {
+    // Given
+    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+
+    // When
+    parser.advance();
+    parser.advance();
+    parser.advance();
+
+    // Then
+    expect(parser.hasMoreCommands()).toBeFalsy();
   });
 });
 

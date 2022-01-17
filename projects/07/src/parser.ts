@@ -14,9 +14,11 @@ const Command = {
 
 export class Parser {
   lines: string[];
+  command: string;
 
   constructor(vmFilePath: string) {
     this.lines = [];
+    this.command = "";
 
     try {
       const buffer = fs.readFileSync(vmFilePath);
@@ -25,13 +27,16 @@ export class Parser {
           .toString()
           .split("\n")
           .map((line) => {
-            if (line) {
-              this.lines.push(line);
+            const input = this.removeComment(line).trim();
+            if (input) {
+              this.lines.push(input);
             }
           });
       }
-    } catch (e) {
-      console.log(e);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.log(e.message);
+      }
     }
   }
 
@@ -39,7 +44,17 @@ export class Parser {
     return this.lines.length > 0;
   }
 
-  advance(): any {
-    throw new Error("Illegal operation.");
+  advance(): void {
+    if (!this.hasMoreCommands()) {
+      throw new Error("Illegal operation.");
+    }
+    this.command = <string>this.lines.shift();
+  }
+
+  private removeComment(text: string): string {
+    let removedText = text;
+    const i = text.indexOf("//");
+    if (i >= 0) removedText = text.substring(0, i);
+    return removedText;
   }
 }
