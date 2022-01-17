@@ -58,6 +58,11 @@ export class Parser {
   commandType(): CommandType {
     return this.command.match(/push/) ? C_PUSH : C_ARITHMETIC;
   }
+
+  arg1(): string {
+    return "push";
+  }
+
   private removeComment(text: string): string {
     let removedText = text;
     const i = text.indexOf("//");
