@@ -60,7 +60,7 @@ export class Parser {
   }
 
   arg1(): string {
-    return "push";
+    return this.command.split(" ")[0];
   }
 
   private removeComment(text: string): string {
