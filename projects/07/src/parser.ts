@@ -25,10 +25,9 @@ export class Parser {
     this.command = "";
 
     try {
-      const buffer = fs.readFileSync(vmFilePath);
+      const buffer = fs.readFileSync(vmFilePath, 'utf-8');
       if (buffer) {
         buffer
-          .toString()
           .split("\n")
           .map((line) => {
             const input = this.removeComment(line).trim();
