@@ -5,4 +5,7 @@ export class CodeWriter {
 
     setFileName(fileName: string) {
     }
+
+    close() {
+    }
 }

@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 
 export function deleteTestFiles() {
-  fs.readdirSync(__dirname)
+  fs.readdirSync("./")
     .filter((f) => f.endsWith(".vm"))
-    .map((f) => unlink(path.join(__dirname, f)));
+    .map((f) => unlink(path.join("./", f)));
 }
 
 function unlink(path: string): void {

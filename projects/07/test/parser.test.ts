@@ -5,8 +5,6 @@ import fs from "fs";
 import path from "path";
 import { deleteTestFiles } from "./fileUtil";
 
-const vmPath = path.join(__dirname, "Hoge.vm");
-
 describe("Initial State", () => {
   afterEach(() => {
     deleteTestFiles();
@@ -27,10 +25,10 @@ describe("Initial State", () => {
 
   test("Empty file", () => {
     // Given
-    fs.writeFileSync(vmPath, "");
+    fs.writeFileSync("Hoge.vm", "");
 
     // When
-    const parser = new Parser(vmPath);
+    const parser = new Parser("Hoge.vm");
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
