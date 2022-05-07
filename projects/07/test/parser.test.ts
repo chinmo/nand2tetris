@@ -3,6 +3,7 @@ import { C_ARITHMETIC, C_PUSH } from "../src/parser";
 
 import fs from "fs";
 import path from "path";
+import { deleteVmFile } from "./fileUtil";
 
 const vmPath = path.join(__dirname, "Hoge.vm");
 
@@ -92,17 +93,3 @@ describe("SimpleAdd.vm", () => {
     }).toThrowError();
   });
 });
-
-function deleteVmFile() {
-  fs.readdirSync(__dirname)
-    .filter((f) => f.endsWith(".vm"))
-    .map((f) => unlink(path.join(__dirname, f)));
-}
-
-function unlink(path: string): void {
-  try {
-    fs.unlinkSync(path);
-  } catch (err) {
-    console.log(err);
-  }
-}
