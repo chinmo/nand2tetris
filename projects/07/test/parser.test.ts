@@ -3,13 +3,13 @@ import { C_ARITHMETIC, C_PUSH } from "../src/parser";
 
 import fs from "fs";
 import path from "path";
-import { deleteVmFile } from "./fileUtil";
+import { deleteTestFiles } from "./fileUtil";
 
 const vmPath = path.join(__dirname, "Hoge.vm");
 
 describe("Initial State", () => {
   afterEach(() => {
-    deleteVmFile();
+    deleteTestFiles();
   });
 
   test("When file is not exist", () => {

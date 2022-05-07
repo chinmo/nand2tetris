@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-export function deleteVmFile() {
+export function deleteTestFiles() {
   fs.readdirSync(__dirname)
     .filter((f) => f.endsWith(".vm"))
     .map((f) => unlink(path.join(__dirname, f)));
