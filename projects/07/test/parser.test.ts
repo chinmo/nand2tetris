@@ -60,7 +60,7 @@ describe("SimpleAdd.vm", () => {
 
     // Then
     expect(parser.commandType()).toBe(C_PUSH);
-    expect(parser.arg1()).toBe("push");
+    expect(parser.arg1()).toBe("constant");
   });
 
   test("SimpleAdd.vm has 3 commands", () => {

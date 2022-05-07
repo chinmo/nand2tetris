@@ -59,7 +59,7 @@ export class Parser {
   }
 
   arg1(): string {
-    return this.command.split(" ")[0];
+    return (this.commandType() == C_ARITHMETIC) ? this.command.split(" ")[0] : this.command.split(" ")[1];
   }
 
   private removeComment(text: string): string {
