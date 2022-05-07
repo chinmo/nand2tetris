@@ -62,6 +62,10 @@ export class Parser {
     return (this.commandType() == C_ARITHMETIC) ? this.command.split(" ")[0] : this.command.split(" ")[1];
   }
 
+  arg2(): number {
+    return 7;
+  }
+
   private removeComment(text: string): string {
     let removedText = text;
     const i = text.indexOf("//");
