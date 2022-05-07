@@ -31,4 +31,18 @@ describe("File creation", () => {
         // Then
         expect(fs.existsSync("test.asm")).toBeTruthy();
     })
+
+    test("When CodeWriter is passed a directory path, then it create one .asm file", () => {
+        // Given
+        fs.mkdirSync("test/testVM", { recursive: true });
+        fs.writeFileSync("test/test.vm", "");
+
+        // When
+        const writer = new CodeWriter("test/testVM");
+        writer.setFileName("test.vm");
+        writer.close();
+
+        // Then
+        expect(fs.existsSync("test/testVM.asm")).toBeTruthy();
+    })
 })
