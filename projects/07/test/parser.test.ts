@@ -64,6 +64,20 @@ describe("SimpleAdd.vm", () => {
     expect(parser.arg2()).toBe(7);
   });
 
+  test("Second command", () => {
+    // Given
+    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+
+    // When
+    parser.advance();
+    parser.advance();
+
+    // Then
+    expect(parser.commandType()).toBe(C_PUSH);
+    expect(parser.arg1()).toBe("constant");
+    expect(parser.arg2()).toBe(8);
+  });
+
   test("SimpleAdd.vm has 3 commands", () => {
     // Given
     const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");

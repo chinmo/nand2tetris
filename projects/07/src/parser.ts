@@ -63,7 +63,7 @@ export class Parser {
   }
 
   arg2(): number {
-    return 7;
+    return +this.command.split(" ")[2];
   }
 
   private removeComment(text: string): string {
