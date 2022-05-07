@@ -3,7 +3,7 @@ import path from "path";
 
 export function deleteTestFiles() {
   fs.readdirSync("./")
-    .filter((f) => f.endsWith(".vm"))
+    .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
     .map((f) => unlink(path.join("./", f)));
 }
 

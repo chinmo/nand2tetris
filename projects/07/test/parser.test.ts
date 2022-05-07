@@ -2,7 +2,6 @@ import { Parser } from "../src/parser";
 import { C_ARITHMETIC, C_PUSH } from "../src/parser";
 
 import fs from "fs";
-import path from "path";
 import { deleteTestFiles } from "./fileUtil";
 
 describe("Initial State", () => {
