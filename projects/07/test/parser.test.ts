@@ -37,10 +37,6 @@ describe("Initial State", () => {
 });
 
 describe("SimpleAdd.vm", () => {
-  afterEach(() => {
-    deleteVmFile();
-  });
-
   test("Valid vm file", () => {
     // Given
 
