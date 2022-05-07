@@ -63,6 +63,9 @@ export class Parser {
   }
 
   arg2(): number {
+    if (this.commandType() == C_ARITHMETIC) {
+      throw new Error("Illegal operation.");
+    }
     return +this.command.split(" ")[2];
   }
 

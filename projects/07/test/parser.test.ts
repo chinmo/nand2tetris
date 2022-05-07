@@ -91,6 +91,9 @@ describe("SimpleAdd.vm", () => {
     expect(parser.hasMoreCommands()).toBeFalsy();
     expect(parser.commandType()).toBe(C_ARITHMETIC);
     expect(parser.arg1()).toBe("add");
+    expect(() => {
+      parser.arg2();
+    }).toThrowError();
   });
 });
 
