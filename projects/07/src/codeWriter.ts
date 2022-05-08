@@ -5,7 +5,8 @@ export class CodeWriter {
     outputFileName : string;
 
     constructor(inputPath : string) {
-        this.outputFileName = path.basename(inputPath, ".vm") + ".asm";
+        const asmFileName = path.basename(inputPath, ".vm") + ".asm";
+        this.outputFileName = path.join(path.dirname(inputPath), asmFileName);
     }
 
     setFileName(fileName: string) {

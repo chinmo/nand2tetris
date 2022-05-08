@@ -23,7 +23,6 @@ function removeDir(dirPath: string) {
 
 function unlink(path: string): void {
   try {
-    console.log("aaa:" + path);
     fs.unlinkSync(path);
   } catch (err) {
     console.log(err);
