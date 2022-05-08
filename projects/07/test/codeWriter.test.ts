@@ -46,3 +46,11 @@ describe("File creation", () => {
         expect(fs.existsSync("test/testVM.asm")).toBeTruthy();
     })
 })
+
+describe("SimpleAdd", () => {
+    test("", () => {
+        // Given
+        // When
+        // Then
+    })
+})
