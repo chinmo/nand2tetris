@@ -2,17 +2,17 @@ import fs from "fs";
 import path from "path";
 
 export class CodeWriter {
-    outputFileName : string;
+    outputFilePath : string;
 
-    constructor(inputPath : string) {
-        const asmFileName = path.basename(inputPath, ".vm") + ".asm";
-        this.outputFileName = path.join(path.dirname(inputPath), asmFileName);
+    constructor(outputPath : string) {
+        this.outputFilePath = outputPath;
     }
 
     setFileName(fileName: string) {
     }
 
     close() {
-        fs.writeFileSync(this.outputFileName, "");
+        if (path.extname(this.outputFilePath) == ".asm")
+            fs.writeFileSync(this.outputFilePath, "");
     }
 }

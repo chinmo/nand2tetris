@@ -8,7 +8,7 @@ describe("File creation", () => {
         deleteTestFiles();
     });
     
-    test("When there is no .vm file, then CodeWriter do not create any .asm file", () => {
+    test("When there is no output file, then CodeWriter do not create any .asm file", () => {
         // Given
         // When
         const writer = new CodeWriter("");
@@ -24,7 +24,7 @@ describe("File creation", () => {
         fs.writeFileSync("test.vm", "");
 
         // When
-        const writer = new CodeWriter("test.vm");
+        const writer = new CodeWriter("test.asm");
         writer.setFileName("test.vm");
         writer.close();
 
@@ -38,7 +38,7 @@ describe("File creation", () => {
         fs.writeFileSync("test/test.vm", "");
 
         // When
-        const writer = new CodeWriter("test/testVM");
+        const writer = new CodeWriter("test/testVM.asm");
         writer.setFileName("test.vm");
         writer.close();
 
