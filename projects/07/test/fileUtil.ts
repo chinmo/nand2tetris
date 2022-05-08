@@ -6,14 +6,14 @@ export function deleteTestFiles() {
     .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
     .map((f) => unlink(path.join("./", f)));
 
-    fs.readdirSync("./test")
-    .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
-    .map((f) => unlink(path.join("./test/", f)));
+  fs.readdirSync("./test")
+  .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
+  .map((f) => unlink(path.join("./test/", f)));
 
-    fs.readdirSync("./test", { withFileTypes: true})
-    .filter((f) => f.isDirectory())
-    .map((dir) => removeDir(path.join("./test/", dir.name)));
-  }
+  fs.readdirSync("./test", { withFileTypes: true})
+  .filter((f) => f.isDirectory())
+  .map((dir) => removeDir(path.join("./test/", dir.name)));
+}
 
 function removeDir(dirPath: string) {
   fs.readdirSync(dirPath)
