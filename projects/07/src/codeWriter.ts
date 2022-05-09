@@ -2,17 +2,17 @@ import fs from "fs";
 import path from "path";
 
 export class CodeWriter {
-    outputFilePath : string;
+  outputFilePath: string;
 
-    constructor(outputPath : string) {
-        this.outputFilePath = outputPath;
-    }
+  constructor(outputPath: string) {
+    this.outputFilePath = outputPath;
+  }
 
-    setFileName(fileName: string) {
-    }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars,@typescript-eslint/explicit-module-boundary-types
+  setFileName(fileName: string) {}
 
-    close() {
-        if (path.extname(this.outputFilePath) == ".asm")
-            fs.writeFileSync(this.outputFilePath, "");
-    }
+  close(): void {
+    if (path.extname(this.outputFilePath) == ".asm")
+      fs.writeFileSync(this.outputFilePath, "");
+  }
 }
