@@ -65,6 +65,10 @@ describe("File creation", () => {
 });
 
 describe("Initial asm code", () => {
+  afterEach(() => {
+    deleteTestFiles();
+  });
+
   test("Whether right initial code", async () => {
     // Given
     const stream = fs
@@ -111,6 +115,10 @@ describe("Initial asm code", () => {
 });
 
 describe("SimpleAdd", () => {
+  afterEach(() => {
+    deleteTestFiles();
+  });
+
   // eslint-disable-next-line jest/expect-expect
   test("first command", async () => {
     // vm: push constant 7
