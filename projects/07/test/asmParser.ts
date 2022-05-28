@@ -38,13 +38,15 @@ export class Parser {
     return this.lines.length > 0;
   }
 
-  advance(): void {
-    if (!this.hasMoreCommands())
-      throw new Error(
-        "advance() can not call when hasMoreCommand() is not true!"
-      );
+  advance(count = 1): void {
+    for (let i = 0; i < count; i++) {
+      if (!this.hasMoreCommands())
+        throw new Error(
+          "advance() can not call when hasMoreCommand() is not true!"
+        );
 
-    this.command = <string>this.lines.shift();
+      this.command = <string>this.lines.shift();
+    }
   }
 
   commandType(): COMMAND_TYPE {

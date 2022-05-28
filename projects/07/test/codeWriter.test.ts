@@ -196,4 +196,55 @@ describe("SimpleAdd", () => {
     expect(parser.commandType()).toBe(A_COMMAND);
     expect(parser.symbol()).toBe("8");
   });
+
+  test("third command", async () => {
+    // Given
+    const stream = fs
+      .createWriteStream("test/SimpleAdd.asm", { encoding: "utf-8" })
+      .on("error", (err) => {
+        console.log(err);
+      });
+
+    // When
+    const writer = new CodeWriter(stream);
+    writer.setFileName("SimpleAdd.vm");
+    writer.writePushPop(C_PUSH, "constant", 7);
+    writer.writePushPop(C_PUSH, "constant", 8);
+    writer.writeArithmetic("add");
+    writer.close();
+    await waitWriteStreamFinished(stream);
+    const parser = new AsmParser("test/SimpleAdd.asm");
+
+    // Then
+    parser.advance(18);
+
+    // @SP // R0(258)
+    parser.advance();
+    expect(parser.commandType()).toBe(A_COMMAND);
+    expect(parser.symbol()).toBe("SP");
+
+    // AM=M-1 // A, SP = 257
+    parser.advance();
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(parser.dest()).toBe("AM");
+    expect(parser.comp()).toBe("M-1");
+
+    // D=M // D = RAM[257](=8)
+    parser.advance();
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(parser.dest()).toBe("D");
+    expect(parser.comp()).toBe("M");
+
+    // A=A-1 // A = 256
+    parser.advance();
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(parser.dest()).toBe("A");
+    expect(parser.comp()).toBe("A-1");
+
+    // M=M+D // RAM[256] = RAM[256] + 8
+    parser.advance();
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(parser.dest()).toBe("M");
+    expect(parser.comp()).toBe("M+D");
+  });
 });

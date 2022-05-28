@@ -28,6 +28,16 @@ export class CodeWriter {
     this.outputStream.write("@SP\n");
     this.outputStream.write("AM=M+1\n");
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  writeArithmetic(command: string): void {
+    this.outputStream.write("@SP\n");
+    this.outputStream.write("AM=M-1\n");
+    this.outputStream.write("D=M\n");
+    this.outputStream.write("A=A-1\n");
+    this.outputStream.write("M=M+D\n");
+  }
+
   close(): void {
     this.outputStream.end();
   }
