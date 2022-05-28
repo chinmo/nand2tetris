@@ -138,10 +138,7 @@ describe("SimpleAdd", () => {
     const parser = new AsmParser("test/SimpleAdd.asm");
 
     // Then
-    parser.advance();
-    parser.advance();
-    parser.advance();
-    parser.advance();
+    parser.advance(4);
 
     // @7
     parser.advance();
@@ -159,11 +156,7 @@ describe("SimpleAdd", () => {
     // M=D
     // @SP
     // AM=M+1 // 257
-    parser.advance();
-    parser.advance();
-    parser.advance();
-    parser.advance();
-    parser.advance();
+    parser.advance(5);
     expect(parser.hasMoreCommands()).toBeFalsy();
   });
 
@@ -186,10 +179,7 @@ describe("SimpleAdd", () => {
     const parser = new AsmParser("test/SimpleAdd.asm");
 
     // Then
-    parser.advance();
-    parser.advance();
-    parser.advance();
-    parser.advance();
+    parser.advance(4);
 
     // @8
     parser.advance();
