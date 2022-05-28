@@ -9,4 +9,6 @@ tools/
 
 *.dSYM/
 
-test/*.asm
+test/**/*.asm
+
+
