@@ -1,4 +1,5 @@
 import fs from "fs";
+import { CommandType } from "../src/parser";
 
 export class CodeWriter {
   outputStream: fs.WriteStream;
@@ -15,6 +16,9 @@ export class CodeWriter {
     this.fileName = fileName;
   }
 
+  writePushPop(command: CommandType, segment: string, index: number): void {
+    this.outputStream.write("hoge");
+  }
   close(): void {
     this.outputStream.end();
   }

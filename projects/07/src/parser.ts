@@ -12,7 +12,7 @@ const Command = {
   Call: 8,
 } as const;
 
-type CommandType = typeof Command[keyof typeof Command];
+export type CommandType = typeof Command[keyof typeof Command];
 
 export const C_ARITHMETIC = Command.Arithmetic;
 export const C_PUSH = Command.Push;

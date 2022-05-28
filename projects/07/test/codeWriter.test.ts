@@ -1,5 +1,7 @@
 import fs from "fs";
 import { CodeWriter } from "../src/codeWriter";
+import { C_PUSH } from "../src/parser";
+import { Parser as AsmParser } from "./asmParser";
 import { deleteTestFiles, waitWriteStreamFinished } from "./fileUtil";
 
 describe("File creation", () => {
@@ -11,9 +13,8 @@ describe("File creation", () => {
     // Given
     const stream = fs
       .createWriteStream("", { encoding: "utf-8" })
-      .on("error", (err) => {
-        console.log(err);
-      });
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .on("error", () => {});
     // When
     const writer = new CodeWriter(stream);
     writer.setFileName("FileDoesNotExist.vm");
@@ -65,9 +66,23 @@ describe("File creation", () => {
 
 describe("SimpleAdd", () => {
   // eslint-disable-next-line jest/expect-expect
-  test("a", () => {
+  test("first command", async () => {
     // Given
+    const stream = fs
+      .createWriteStream("test/SimpleAdd.asm", { encoding: "utf-8" })
+      .on("error", (err) => {
+        console.log(err);
+      });
+
     // When
+    const writer = new CodeWriter(stream);
+    writer.setFileName("SimpleAdd.vm");
+    writer.writePushPop(C_PUSH, "constant", 7);
+    writer.close();
+    await waitWriteStreamFinished(stream);
+
     // Then ここで、06/src/Parserでテストするのがええんちゃうの！
+    const parser = new AsmParser("test/SimpleAdd.asm");
+    expect(parser.hasMoreCommands()).toBeTruthy();
   });
 });
