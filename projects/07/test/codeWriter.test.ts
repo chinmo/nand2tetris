@@ -51,6 +51,6 @@ describe("SimpleAdd", () => {
   test("a", () => {
     // Given
     // When
-    // Then
+    // Then ここで、06/src/Parserでテストするのがええんちゃうの！
   });
 });
