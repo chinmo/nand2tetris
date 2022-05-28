@@ -9,6 +9,12 @@ export class CodeWriter {
     this.outputStream = outputStream;
     this.outputStream.cork();
     this.fileName = "";
+
+    // @256
+    // D=A
+    // @SP
+    // M=D
+    this.outputStream.write("@256/nD=A/n@SP/nM=D/n");
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

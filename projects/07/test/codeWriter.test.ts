@@ -1,7 +1,7 @@
 import fs from "fs";
 import { CodeWriter } from "../src/codeWriter";
 import { C_PUSH } from "../src/parser";
-import { Parser as AsmParser } from "./asmParser";
+import { A_COMMAND, Parser as AsmParser } from "./asmParser";
 import { deleteTestFiles, waitWriteStreamFinished } from "./fileUtil";
 
 describe("File creation", () => {
@@ -64,9 +64,54 @@ describe("File creation", () => {
   });
 });
 
+describe("Initial asm code", () => {
+  test("Whether right initial code", async () => {
+    // asm:
+    // @256
+    // D=A
+    // @SP
+    // M=D
+
+    // Given
+    const stream = fs
+      .createWriteStream("test/Empty.asm", { encoding: "utf-8" })
+      .on("error", (err) => {
+        console.log(err);
+      });
+
+    // When
+    const writer = new CodeWriter(stream);
+    writer.setFileName("Empty.vm");
+    writer.close();
+    await waitWriteStreamFinished(stream);
+
+    // Then ここで、06/src/Parserでテストするのがええんちゃうの！
+    const parser = new AsmParser("test/Empty.asm");
+    expect(parser.hasMoreCommands()).toBeTruthy();
+
+    parser.advance();
+    expect(parser.commandType()).toBe(A_COMMAND);
+  });
+});
+
 describe("SimpleAdd", () => {
   // eslint-disable-next-line jest/expect-expect
   test("first command", async () => {
+    // vm: push constant 7
+    // asm:
+    // @256
+    // D=A
+    // @SP
+    // M=D
+    // // push constant 7
+    // @7
+    // D=A
+    // @SP
+    // A=M
+    // M=D
+    // @SP
+    // AM=M+1 // 257
+
     // Given
     const stream = fs
       .createWriteStream("test/SimpleAdd.asm", { encoding: "utf-8" })

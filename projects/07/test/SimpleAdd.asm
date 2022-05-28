@@ -1,1 +1,1 @@
-hoge
+@256/nD=A/n@SP/nM=D/nhoge
