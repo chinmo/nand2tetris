@@ -1,23 +1,22 @@
 import fs from "fs";
 import path from "path";
 
-export function deleteTestFiles() {
+export function deleteTestFiles(): void {
   fs.readdirSync("./")
     .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
     .map((f) => unlink(path.join("./", f)));
 
   fs.readdirSync("./test")
-  .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
-  .map((f) => unlink(path.join("./test/", f)));
+    .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
+    .map((f) => unlink(path.join("./test/", f)));
 
-  fs.readdirSync("./test", { withFileTypes: true})
-  .filter((f) => f.isDirectory())
-  .map((dir) => removeDir(path.join("./test/", dir.name)));
+  fs.readdirSync("./test", { withFileTypes: true })
+    .filter((f) => f.isDirectory())
+    .map((dir) => removeDir(path.join("./test/", dir.name)));
 }
 
 function removeDir(dirPath: string) {
-  fs.readdirSync(dirPath)
-    .map((f) => unlink(path.join(dirPath, f)));
+  fs.readdirSync(dirPath).map((f) => unlink(path.join(dirPath, f)));
   fs.rmdirSync(dirPath);
 }
 
