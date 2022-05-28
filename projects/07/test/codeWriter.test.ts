@@ -1,7 +1,7 @@
 import fs from "fs";
 import { CodeWriter } from "../src/codeWriter";
 import { C_PUSH } from "../src/parser";
-import { A_COMMAND, Parser as AsmParser } from "./asmParser";
+import { A_COMMAND, C_COMMAND, Parser as AsmParser } from "./asmParser";
 import { deleteTestFiles, waitWriteStreamFinished } from "./fileUtil";
 
 describe("File creation", () => {
@@ -66,12 +66,6 @@ describe("File creation", () => {
 
 describe("Initial asm code", () => {
   test("Whether right initial code", async () => {
-    // asm:
-    // @256
-    // D=A
-    // @SP
-    // M=D
-
     // Given
     const stream = fs
       .createWriteStream("test/Empty.asm", { encoding: "utf-8" })
@@ -89,8 +83,27 @@ describe("Initial asm code", () => {
     const parser = new AsmParser("test/Empty.asm");
     expect(parser.hasMoreCommands()).toBeTruthy();
 
+    // @256
     parser.advance();
     expect(parser.commandType()).toBe(A_COMMAND);
+    expect(parser.symbol()).toBe("256");
+
+    // D=A
+    parser.advance();
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(parser.dest()).toBe("D");
+    expect(parser.comp()).toBe("A");
+
+    // @SP
+    parser.advance();
+    expect(parser.commandType()).toBe(A_COMMAND);
+    expect(parser.symbol()).toBe("SP");
+
+    // M=D
+    parser.advance();
+    expect(parser.commandType()).toBe(C_COMMAND);
+    expect(parser.dest()).toBe("M");
+    expect(parser.comp()).toBe("D");
   });
 });
 

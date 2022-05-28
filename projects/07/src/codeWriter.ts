@@ -14,7 +14,7 @@ export class CodeWriter {
     // D=A
     // @SP
     // M=D
-    this.outputStream.write("@256/nD=A/n@SP/nM=D/n");
+    this.outputStream.write("@256\nD=A\n@SP\nM=D\n");
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
