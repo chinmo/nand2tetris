@@ -1,18 +1,21 @@
 import fs from "fs";
-import path from "path";
 
 export class CodeWriter {
-  outputFilePath: string;
+  outputStream: fs.WriteStream;
+  fileName: string;
 
-  constructor(outputPath: string) {
-    this.outputFilePath = outputPath;
+  constructor(outputStream: fs.WriteStream) {
+    this.outputStream = outputStream;
+    this.outputStream.cork();
+    this.fileName = "";
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars,@typescript-eslint/explicit-module-boundary-types
-  setFileName(fileName: string) {}
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  setFileName(fileName: string) {
+    this.fileName = fileName;
+  }
 
   close(): void {
-    if (path.extname(this.outputFilePath) == ".asm")
-      fs.writeFileSync(this.outputFilePath, "");
+    this.outputStream.end();
   }
 }
