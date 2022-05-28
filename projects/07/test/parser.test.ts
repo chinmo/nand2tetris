@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Parser } from "../src/parser";
+import { C_ARITHMETIC, C_PUSH, Parser } from "../src/parser";
 import { deleteTestFiles } from "./fileUtil";
 
 describe("Initial State", () => {
@@ -27,10 +27,8 @@ describe("Initial State", () => {
     // Given
     fs.writeFileSync("Hoge.vm", "");
     const rs = fs.createReadStream("Hoge.vm", { encoding: "utf-8" });
-    rs.on("end", () => console.log("終わったぞい"));
 
     // When
-    //    const parser = new Parser("Hoge.vm");
     const parser = await Parser.createInstance(rs);
 
     // Then
@@ -38,21 +36,27 @@ describe("Initial State", () => {
   });
 });
 
-/*
 describe("SimpleAdd.vm", () => {
-  test("Valid vm file", () => {
+  test("Valid vm file", async () => {
     // Given
+    const rs = fs.createReadStream("StackArithmetic/SimpleAdd/SimpleAdd.vm", {
+      encoding: "utf-8",
+    });
 
     // When
-    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+    const parser = await Parser.createInstance(rs);
 
     // Then
     expect(parser.hasMoreCommands()).toBeTruthy();
   });
 
-  test("First command", () => {
+  test("First command", async () => {
     // Given
-    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+    const rs = fs.createReadStream("StackArithmetic/SimpleAdd/SimpleAdd.vm", {
+      encoding: "utf-8",
+    });
+
+    const parser = await Parser.createInstance(rs);
 
     // When
     parser.advance();
@@ -63,9 +67,13 @@ describe("SimpleAdd.vm", () => {
     expect(parser.arg2()).toBe(7);
   });
 
-  test("Second command", () => {
+  test("Second command", async () => {
     // Given
-    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+    const rs = fs.createReadStream("StackArithmetic/SimpleAdd/SimpleAdd.vm", {
+      encoding: "utf-8",
+    });
+
+    const parser = await Parser.createInstance(rs);
 
     // When
     parser.advance();
@@ -77,9 +85,13 @@ describe("SimpleAdd.vm", () => {
     expect(parser.arg2()).toBe(8);
   });
 
-  test("SimpleAdd.vm has 3 commands", () => {
+  test("SimpleAdd.vm has 3 commands", async () => {
     // Given
-    const parser = new Parser("StackArithmetic/SimpleAdd/SimpleAdd.vm");
+    const rs = fs.createReadStream("StackArithmetic/SimpleAdd/SimpleAdd.vm", {
+      encoding: "utf-8",
+    });
+
+    const parser = await Parser.createInstance(rs);
 
     // When
     parser.advance();
@@ -95,4 +107,3 @@ describe("SimpleAdd.vm", () => {
     }).toThrowError();
   });
 });
-*/
