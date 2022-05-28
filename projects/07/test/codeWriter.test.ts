@@ -119,7 +119,6 @@ describe("SimpleAdd", () => {
     deleteTestFiles();
   });
 
-  // eslint-disable-next-line jest/expect-expect
   test("first command", async () => {
     // vm: push constant 7
 
@@ -166,5 +165,35 @@ describe("SimpleAdd", () => {
     parser.advance();
     parser.advance();
     expect(parser.hasMoreCommands()).toBeFalsy();
+  });
+
+  test("second command", async () => {
+    // vm: push constant 8
+
+    // Given
+    const stream = fs
+      .createWriteStream("test/SimpleAdd.asm", { encoding: "utf-8" })
+      .on("error", (err) => {
+        console.log(err);
+      });
+
+    // When
+    const writer = new CodeWriter(stream);
+    writer.setFileName("SimpleAdd.vm");
+    writer.writePushPop(C_PUSH, "constant", 8);
+    writer.close();
+    await waitWriteStreamFinished(stream);
+    const parser = new AsmParser("test/SimpleAdd.asm");
+
+    // Then
+    parser.advance();
+    parser.advance();
+    parser.advance();
+    parser.advance();
+
+    // @8
+    parser.advance();
+    expect(parser.commandType()).toBe(A_COMMAND);
+    expect(parser.symbol()).toBe("8");
   });
 });
