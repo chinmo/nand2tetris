@@ -35,15 +35,8 @@ describe("File creation", () => {
     const writer = new CodeWriter(stream);
     writer.setFileName("test.vm");
     writer.close();
-
     await waitWriteStreamFinished(stream);
-    /*
-    await new Promise((resolve) => {
-      stream.on("finish", () => {
-        resolve("finish writeStream");
-      });
-    }).then((msg) => console.log(msg));
-*/
+
     // Then
     expect(fs.existsSync("test.asm")).toBeTruthy();
   });
