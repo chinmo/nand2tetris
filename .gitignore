@@ -3,12 +3,13 @@ node_modules/
 tools/
 .vscode/
 
+test/**/*.asm
+
 *.out
 .DS_Store
 *.hack
 
 *.dSYM/
 
-test/**/*.asm
 
 
