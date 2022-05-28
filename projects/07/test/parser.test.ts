@@ -1,7 +1,5 @@
-import { Parser } from "../src/parser";
-import { C_ARITHMETIC, C_PUSH } from "../src/parser";
-
 import fs from "fs";
+import { Parser } from "../src/parser";
 import { deleteTestFiles } from "./fileUtil";
 
 describe("Initial State", () => {
@@ -9,10 +7,13 @@ describe("Initial State", () => {
     deleteTestFiles();
   });
 
-  test("When file is not exist", () => {
+  test("When file is not exist", async () => {
     // Given
+    const rs = fs.createReadStream("FilePathIsNotExist", {
+      encoding: "utf-8",
+    });
     // When
-    const parser = new Parser("FilePathIsNotExist");
+    const parser = await Parser.createInstance(rs);
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
@@ -22,18 +23,22 @@ describe("Initial State", () => {
     }).toThrowError();
   });
 
-  test("Empty file", () => {
+  test("Empty file", async () => {
     // Given
     fs.writeFileSync("Hoge.vm", "");
+    const rs = fs.createReadStream("Hoge.vm", { encoding: "utf-8" });
+    rs.on("end", () => console.log("終わったぞい"));
 
     // When
-    const parser = new Parser("Hoge.vm");
+    //    const parser = new Parser("Hoge.vm");
+    const parser = await Parser.createInstance(rs);
 
     // Then
     expect(parser.hasMoreCommands()).toBeFalsy();
   });
 });
 
+/*
 describe("SimpleAdd.vm", () => {
   test("Valid vm file", () => {
     // Given
@@ -90,3 +95,4 @@ describe("SimpleAdd.vm", () => {
     }).toThrowError();
   });
 });
+*/

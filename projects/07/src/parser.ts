@@ -19,28 +19,39 @@ export const C_PUSH = Command.Push;
 export class Parser {
   lines: string[];
   command: string;
+  fileStream: fs.ReadStream;
 
-  constructor(vmFilePath: string) {
+  constructor(fileStream: fs.ReadStream) {
     this.lines = [];
     this.command = "";
+    this.fileStream = fileStream;
+  }
+
+  static async createInstance(fileStream: fs.ReadStream): Promise<Parser> {
+    const parser = new Parser(fileStream);
 
     try {
-      const buffer = fs.readFileSync(vmFilePath, 'utf-8');
+      let buffer = "";
+      for await (const chunk of parser.fileStream) {
+        buffer += chunk;
+      }
+
+      //      const buffer = fs.readFileSync(vmFilePath, 'utf-8');
       if (buffer) {
-        buffer
-          .split(/\r?\n/)
-          .map((line) => {
-            const input = this.removeComment(line).trim();
-            if (input) {
-              this.lines.push(input);
-            }
-          });
+        buffer.split(/\r?\n/).map((line) => {
+          const input = parser.removeComment(line).trim();
+          if (input) {
+            parser.lines.push(input);
+          }
+        });
       }
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.log(e.message);
       }
     }
+
+    return parser;
   }
 
   hasMoreCommands(): boolean {
@@ -59,7 +70,9 @@ export class Parser {
   }
 
   arg1(): string {
-    return (this.commandType() == C_ARITHMETIC) ? this.command.split(" ")[0] : this.command.split(" ")[1];
+    return this.commandType() == C_ARITHMETIC
+      ? this.command.split(" ")[0]
+      : this.command.split(" ")[1];
   }
 
   arg2(): number {
