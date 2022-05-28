@@ -1,6 +1,6 @@
 import fs from "fs";
 import { CodeWriter } from "../src/codeWriter";
-import { deleteTestFiles } from "./fileUtil";
+import { deleteTestFiles, waitWriteStreamFinished } from "./fileUtil";
 
 describe("File creation", () => {
   afterEach(() => {
@@ -36,12 +36,14 @@ describe("File creation", () => {
     writer.setFileName("test.vm");
     writer.close();
 
+    await waitWriteStreamFinished(stream);
+    /*
     await new Promise((resolve) => {
       stream.on("finish", () => {
         resolve("finish writeStream");
       });
     }).then((msg) => console.log(msg));
-
+*/
     // Then
     expect(fs.existsSync("test.asm")).toBeTruthy();
   });

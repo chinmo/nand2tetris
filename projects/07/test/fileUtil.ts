@@ -1,6 +1,16 @@
 import fs from "fs";
 import path from "path";
 
+export async function waitWriteStreamFinished(
+  stream: fs.WriteStream
+): Promise<unknown> {
+  return new Promise((resolve) => {
+    stream.on("finish", () => {
+      resolve("finish writeStream");
+    });
+  });
+}
+
 export function deleteTestFiles(): void {
   fs.readdirSync("./")
     .filter((f) => f.endsWith(".vm") || f.endsWith(".asm"))
