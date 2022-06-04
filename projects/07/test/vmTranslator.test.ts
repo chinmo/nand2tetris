@@ -1,5 +1,9 @@
+import { vmTranslator } from "../src/vmTranslator";
 describe("File Handling", () => {
-  test("...", () => {
-    expect(true).toBeTruthy();
+  test("No Arguments", () => {
+    // Given
+    // When
+    // Then
+    expect(vmTranslator("")).toBeUndefined();
   });
 });
